@@ -69,9 +69,8 @@ export default {
                 a {
                     flex: 1;
                     display: flex;
-                    align-items: center;
                     flex-direction: column;
-                    justify-content: center;
+                    align-items: center;
 
                     i {
                         height: 24px;
