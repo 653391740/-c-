@@ -1,6 +1,7 @@
 <template>
 <div class="title">
     {{ title }}
+    <div v-if="back" @click="$router.back()"><span>‹</span>返回</div>
 </div>
 </template>
 
@@ -10,6 +11,10 @@ export default {
         title: {
             type: String,
             default: '标题'
+        },
+        back: {
+            type: Boolean,
+            default: false
         }
     }
 }
@@ -30,5 +35,19 @@ export default {
         font-weight: bold;
         color: #fff;
         background-color: #ff6040;
+
+        div {
+            position: absolute;
+            height: 44px;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            font-size: 14px;
+
+            span {
+                font-size: 20px;
+                margin-right: 5px;
+            }
+        }
     }
 </style>

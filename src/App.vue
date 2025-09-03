@@ -12,4 +12,7 @@ export default {
 
 <style scoped
   lang="scss">
+  #app {
+    height: 100vh;
+  }
 </style>

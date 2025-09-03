@@ -12,3 +12,6 @@ export const getbanner = () => {
 export const gethortgoods = () => {
     return http.get('gethortgoods')
 }
+export const getgoodlist = (params) => {
+    return http.get('getgoodlist', { params })
+}

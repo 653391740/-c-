@@ -33,7 +33,8 @@ export default {
     data() {
         return {
             activeIndex: 0,
-            navlist: []
+            navlist: [],
+            first: true
         }
     },
     mounted() {
@@ -54,6 +55,16 @@ export default {
             const left = e.target.offsetLeft + (e.target.offsetWidth - line.offsetWidth) / 2;
             line.style.left = left + 'px';
             this.activeIndex = index;
+            if (this.first) return this.first = false
+            setTimeout(() => {
+                this.$router.push({
+                    path: '/goodslist',
+                    query: {
+                        type: 1,
+                        cateid: this.navlist[index].id
+                    }
+                })
+            }, 400)
         }
     }
 }
