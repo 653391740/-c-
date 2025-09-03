@@ -37,9 +37,9 @@ export default {
                 :class="{ 'active': activeIndex === index }"
                 @click="activeIndex = index">
                 <router-link :to="item.path">
-                    <i :class="item.icon"></i>
                     {{ item.dynamicText
                         ? (token ? item.text : '未登录') : item.text }}
+                    <i :class="item.icon"></i>
                 </router-link>
             </li>
         </ul>
@@ -59,15 +59,14 @@ export default {
 
         ul {
             display: flex;
-            height: 50px;
 
             li {
                 flex: 1;
-                display: flex;
                 font-size: 12px;
 
                 a {
-                    flex: 1;
+                    padding-top: 3px;
+                    height: 50px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -75,7 +74,7 @@ export default {
                     i {
                         height: 24px;
                         font-size: 24px;
-                        margin-bottom: 5px;
+                        margin-top: -5px;
                     }
                 }
 

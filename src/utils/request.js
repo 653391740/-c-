@@ -6,9 +6,9 @@ const service = axios.create({
 
 //请求拦截器
 service.interceptors.request.use(config => {
-    const token = localStorage.getItem('sc_token');
-    if (token) {
-        config.headers['Authorization'] = token;
+    const userinfo = JSON.parse(localStorage.getItem('userinfo'));
+    if (userinfo) {
+        config.headers['Authorization'] = 'Bearer ' + userinfo.token;
     }
     return config;
 }, error => {

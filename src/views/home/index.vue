@@ -1,6 +1,6 @@
 <template>
 <div class="home">
-    <Title title="小U商城"></Title>
+    <Title title="首页"></Title>
     <Head></Head>
     <Banner></Banner>
     <Nav></Nav>

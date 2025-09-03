@@ -14,7 +14,7 @@
         <ul ref="nav">
             <li v-for="val, index in navlist"
                 :class="{ 'active': activeIndex === index }"
-                @click="changeIndex(index, $event)">{{ val }}</li>
+                @click="changeIndex(index, $event)">{{ val.catename }}</li>
             <div ref="line"
                 class="line"></div>
         </ul>
@@ -26,31 +26,29 @@
 </template>
 
 <script>
+import {
+    getcate
+} from '@/api/home'
 export default {
     data() {
         return {
             activeIndex: 0,
-            navlist: [
-                '推荐',
-                '女装',
-                '男装',
-                '内衣',
-                '鞋包',
-                '箱包',
-                '配饰',
-                '运动',
-                '户外',
-                '美食',
-                '保健',
-                '宠物',
-                '全部'
-            ]
+            navlist: []
         }
     },
     mounted() {
-        this.$refs.nav.children[0].click();
+        this.getcate()
     },
     methods: {
+        async getcate() {
+            const { code, list } = await getcate()
+            if (code === 200) {
+                this.navlist = list
+                this.$nextTick(() => {
+                    this.$refs.nav.children[0].click();
+                })
+            }
+        },
         changeIndex(index, e) {
             const line = this.$refs.line;
             const left = e.target.offsetLeft + (e.target.offsetWidth - line.offsetWidth) / 2;

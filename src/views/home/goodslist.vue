@@ -2,25 +2,26 @@
 <div class="goods">
     <nav>
         <ul>
-            <li v-for="item in tabs"
+            <li v-for="item, index in tabs"
                 :key="item"
-                :class="{ 'active': item === currentTab }"
-                @click="changeTab(item)">{{ item }}</li>
+                :class="{ 'active': index == currentIndex }"
+                @click="changeTab(index)">{{ item }}</li>
         </ul>
     </nav>
     <div class="goods_list">
         <ul>
-            <li>
+            <li v-for="value in goodslist"
+                :key="value.id">
                 <div class="left">
-                    <img src="/src/assets/1.png">
-                    <p>{{ currentTab }}</p>
+                    <img :src="'http://43.138.15.137:4000' + value.img">
+                    <p>{{ tabs[currentIndex] }}</p>
                 </div>
                 <div class="right">
-                    <p>商品名称</p>
+                    <p>{{ value.goodsname }}</p>
                     <div>
                         <div class="price">
-                            <div>¥<span>100</span></div>
-                            <p>¥199</p>
+                            <div>¥<span>{{ value.price }}</span></div>
+                            <p>¥{{ value.market_price }}</p>
                         </div>
                         <button>立即抢购</button>
                     </div>
@@ -32,16 +33,34 @@
 </template>
 
 <script>
+import {
+    gethortgoods
+} from '@/api/home'
 export default {
     data() {
         return {
-            currentTab: '热门推荐',
+            currentIndex: 0,
             tabs: ['热门推荐', '上新推荐', '所有商品'],
+            goods_list: []
+        }
+    },
+    mounted() {
+        this.gethortgoods()
+    },
+    computed: {
+        goodslist() {
+            if (this.goods_list.length > 0) return this.goods_list[this.currentIndex].content
         }
     },
     methods: {
-        changeTab(item) {
-            this.currentTab = item
+        async gethortgoods() {
+            const { code, list } = await gethortgoods()
+            if (code === 200) {
+                this.goods_list = list
+            }
+        },
+        changeTab(index) {
+            this.currentIndex = index
         }
     }
 }

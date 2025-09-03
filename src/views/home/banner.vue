@@ -19,7 +19,7 @@
         <!-- 实际轮播项 -->
         <div class="carousel-item"
             v-for="(slide, index) in slides"
-            :key="index">
+            :key="slide.id">
             <img :src="'http://43.138.15.137:4000' + slide.img"
                 :alt="slide.title"
                 class="carousel-img">
@@ -48,30 +48,14 @@
 </template>
 
 <script>
+import {
+    getbanner
+} from '@/api/home'
 export default {
     name: 'SeamlessCarousel',
     data() {
         return {
-            slides: [
-                {
-                    "id": 1,
-                    "second_cateid": 16,
-                    "title": "活动322",
-                    "img": "/uploads/banner/ed9d6b20-8f4b-11ee-9ff0-8d10ce4a0674.png"
-                },
-                {
-                    "id": 7,
-                    "second_cateid": null,
-                    "title": "wdawd",
-                    "img": "/uploads/banner/640fb1b0-8d34-11ee-90a0-e569892ca58d.jpg"
-                },
-                {
-                    "id": 8,
-                    "second_cateid": null,
-                    "title": "wwww",
-                    "img": "/uploads/banner/713a3540-8d34-11ee-90a0-e569892ca58d.jpg"
-                },
-            ],
+            slides: [],
             // 是否自动轮播
             autoPlay: true,
             // 当前索引（考虑了前后复制的元素）
@@ -102,6 +86,7 @@ export default {
         if (this.autoPlay) {
             this.startAutoPlay();
         }
+        this.getbanner()
 
         this.bindTouchEvents();
 
@@ -111,6 +96,12 @@ export default {
         this.unbindTouchEvents();
     },
     methods: {
+        async getbanner() {
+            const { code, list } = await getbanner()
+            if (code === 200) {
+                this.slides = list
+            }
+        },
         // 开始自动轮播
         startAutoPlay() {
             this.clearTimer();
@@ -192,6 +183,7 @@ export default {
         // 触摸开始处理
         handleTouchStart(e) {
             this.startX = e.touches[0].clientX;
+            this.endX = e.touches[0].clientX
             this.isTransitioning = false;
             this.touchTime = new Date()
             // 暂停自动播放
@@ -218,7 +210,6 @@ export default {
         // 触摸结束处理
         handleTouchEnd() {
             const diffX = this.endX - this.startX;
-
             this.$refs.carouselTrack.style.transition = 'transform 0.5s ease';
             const time = new Date() - this.touchTime
             if (time < 300) {
@@ -238,6 +229,8 @@ export default {
                     this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
                 }
             }
+            this.startX = 0
+            this.endX = 0
             this.touchTime = 0
             // 恢复自动播放
             if (this.autoPlay) {
