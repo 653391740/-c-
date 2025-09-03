@@ -2,9 +2,7 @@
 <div class="goods_list">
     <ul>
         <li v-for="value in goodslist"
-            :style="{
-                'background-color': color ? '#fff' : '#fafafa'
-            }"
+            :style="{ 'background-color': color }"
             :key="value.id">
             <div class="left">
                 <img :src="'http://43.138.15.137:4000' + value.img">
@@ -28,7 +26,7 @@
     </ul>
     <div class="loading"
         ref="loading"
-        v-if="typeof isloading == 'boolean'">
+        v-if="showloading">
         <div v-if="loading">
             加载中...
         </div>
@@ -59,23 +57,23 @@ export default {
             default: false
         },
         color: {
-            type: Boolean,
-            default: true
+            type: String,
+            default: '#fafafa'
         },
         params: {
             type: Object,
             default: () => { }
         },
-        isloading: ''
-    },
-    data() {
-        return {
-            loading: false,
-        }
+        showloading: {
+            type: Boolean,
+            default: false
+        },
+        loading: {
+            type: Boolean,
+            default: false
+        },
     },
     mounted() {
-        console.log(this.isloading);
-
         this.$nextTick(() => {
             this.loadmore()
         })
@@ -85,16 +83,10 @@ export default {
     },
     methods: {
         loadmore() {
-            if (this.params && !this.loading && !this.isloading) {
+            if (this.params && !this.loading && this.showloading) {
                 const isloading = window.scrollY + window.innerHeight >= this.$refs.loading.offsetTop
-                if (isloading) {
-                    this.loading = true;
-                    this.$emit('loading')
-                }
+                if (isloading) this.$emit('loading')
             }
-        },
-        toggle() {
-            this.loading = false
         }
     }
 }

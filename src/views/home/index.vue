@@ -18,6 +18,7 @@
         <Goodslist :goodslist="goodslist"
             :type="tabs[currentIndex]"
             :isshow="true"
+            :color="'#fff'"
             button="立即抢购"></Goodslist>
     </div>
 </div>

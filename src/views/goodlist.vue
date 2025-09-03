@@ -24,11 +24,10 @@
     </div>
     <!-- isloading 显示加载-->
     <goodslist :goodslist="goodlist"
-        :color="false"
-        :isloading="isloading"
+        showloading
+        :loading="loading"
         @loading="getgoodlist"
-        :params="params"
-        ref="goodslist"></goodslist>
+        :params="params"></goodslist>
 </div>
 </template>
 <script>
@@ -49,7 +48,7 @@ export default {
                 page: 1,
                 size: 6,
             },
-            isloading: false,
+            loading: false,
         }
     },
     mounted() {
@@ -57,17 +56,13 @@ export default {
     },
     methods: {
         async getgoodlist() {
-            if (this.isloading) return
-            this.isloading = true;
+            this.loading = true;
             const { code, list: { goodData } } = await getgoodlist(this.params)
             if (goodData !== null) {
                 this.goodlist.push(...goodData);
                 this.params.page++
-                this.isloading = false
-            } else {
-                this.isloading = true;
             }
-            this.$refs.goodslist.toggle()
+            this.loading = false
         }
     }
 }
