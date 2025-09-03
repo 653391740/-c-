@@ -20,6 +20,7 @@ export default {
         width: 100%;
         height: 100vh;
         padding-bottom: 50px;
+        padding-top: 44px;
 
         &>div {
             height: 100%;
