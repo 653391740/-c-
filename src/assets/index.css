@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: none;
 }
 
 html {
@@ -45,10 +46,7 @@ svg {
 a {
   text-decoration: none !important;
   color: inherit;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  -webkit-tap-highlight-color: transparent;
 }
 
 ul,

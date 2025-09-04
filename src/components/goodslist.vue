@@ -83,7 +83,7 @@ export default {
     },
     methods: {
         loadmore() {
-            if (this.params && !this.loading && this.showloading) {
+            if (this.params && !this.loading) {
                 const isloading = window.scrollY + window.innerHeight >= this.$refs.loading.offsetTop
                 if (isloading) this.$emit('loading')
             }

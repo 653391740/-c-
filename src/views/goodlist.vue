@@ -9,21 +9,22 @@
                 placeholder="搜索">
         </div>
         <ul>
-            <li>综合排序</li>
+            <li @click="sortstatus = 0">综合排序</li>
             <li>销量</li>
-            <li>价格
+            <li @click="toggleSort">价格11
                 <div>
-                    <span style="border-bottom-color: #fff !important;"></span>
-                    <span style="border-top-color: #fff !important;"></span>
+                    <span :style="{ 'border-bottom-color': sortstatus === 1 ? '#FF0000' : '#fff' }"></span>
+                    <span :style="{ 'border-top-color': sortstatus === 2 ? '#FF0000' : '#fff' }"></span>
                 </div>
             </li>
             <li>好评度</li>
             <li>店铺</li>
-            <li class="iconfont">筛选</li>
+            <li class="iconfont">筛选
+            </li>
         </ul>
     </div>
     <!-- isloading 显示加载-->
-    <goodslist :goodslist="goodlist"
+    <goodslist :goodslist="sort"
         showloading
         :loading="loading"
         @loading="getgoodlist"
@@ -49,12 +50,29 @@ export default {
                 size: 6,
             },
             loading: false,
+            sortstatus: 0,
+        }
+    },
+    computed: {
+        sort() {
+            if (this.sortstatus === 0) {
+                return this.goodlist
+            } else if (this.sortstatus === 1) {
+                return [...this.goodlist].sort((a, b) => a.price - b.price)
+            } else {
+                return [...this.goodlist].sort((a, b) => b.price - a.price)
+            }
         }
     },
     mounted() {
         this.params = { ...this.params, ...this.$route.query };
     },
     methods: {
+        toggleSort() {
+            this.sortstatus === 0 ? this.sortstatus = 1
+                : this.sortstatus === 1 ? this.sortstatus = 2
+                    : this.sortstatus = 1
+        },
         async getgoodlist() {
             this.loading = true;
             const { code, list: { goodData } } = await getgoodlist(this.params)
@@ -129,6 +147,7 @@ export default {
                             padding: 0;
                             border: 5px solid transparent;
                             border-width: 5px 4px;
+                            transition: all 0.3s;
                         }
                     }
                 }
