@@ -1,51 +1,50 @@
 <template>
 <div class="login">
-    <input type="text"
-        placeholder="请输入手机号"
-        v-model="form.phone">
-    <input type="password"
-        placeholder="请输入密码"
-        v-model="form.password">
-    <button @click="login">登录</button>
+    <div class="login-title">欢迎登陆严选商城</div>
+    <img src="/src/assets/zbc.png">
+    <button @click="$router.push('/formlogin')">账号密码登录</button>
+    <p>手机号短信登录</p>
 </div>
 </template>
 
 <script>
-import {
-    login
-} from '@/api/home'
+
 export default {
-    name: 'Login',
-    data() {
-        return {
-            form: {
-                phone: '18001066656',
-                password: '123456',
-            }
-        }
-    },
-    methods: {
-        async login() {
-            if (this.username === '' || this.password === '') return alert('请输入用户名和密码')
-            const { code, list } = await login(this.form)
-            if (code === 200) {
-                localStorage.setItem('userinfo', JSON.stringify(list))
-                this.$router.push('/')
-            }
-        }
-    }
+
 }
 </script>
 
 <style scoped
     lang="scss">
     .login {
-        width: 375px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 50px;
 
-        input {
-            padding: 5px 10px;
-            display: block;
-            margin-bottom: 10px;
+        .login-title {
+            margin-top: 35%;
+            font-size: 24px;
+            color: #666;
+        }
+
+        img {
+            width: 70%;
+        }
+
+        button {
+            width: 90%;
+            height: 44px;
+            background-color: #ff6034;
+            color: #fff;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        p {
+            font-size: 12px;
         }
     }
 </style>

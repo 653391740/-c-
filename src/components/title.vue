@@ -33,7 +33,7 @@ export default {
         height: 44px;
         line-height: 44px;
         text-align: center;
-        font-weight: bold;
+        font-weight: 400;
         color: #fff;
         background-color: #ff6040;
 

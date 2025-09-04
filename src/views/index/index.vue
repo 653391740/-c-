@@ -21,6 +21,7 @@ export default {
         height: 100vh;
         padding-bottom: 50px;
         padding-top: 44px;
+        background-color: #f2f2f2;
 
         &>div {
             height: 100%;
