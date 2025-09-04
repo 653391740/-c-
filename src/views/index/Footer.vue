@@ -2,8 +2,8 @@
 export default {
     data() {
         return {
-            token: localStorage.getItem('yanxuan_token') || '',
-            activeIndex: 0,
+            token: '',
+            activeIndex: JSON.parse(sessionStorage.getItem('activeIndex')) || 0,
             navItems: [
                 {
                     path: '/home', text: '商场',
@@ -25,6 +25,16 @@ export default {
                 }
             ]
         }
+    },
+    created() {
+        const userinfoStr = localStorage.getItem('userinfo');
+        this.token = userinfoStr ? JSON.parse(userinfoStr).token : null;
+    },
+    methods: {
+        handleClick(index) {
+            this.activeIndex = index;
+            sessionStorage.setItem('activeIndex', JSON.stringify(index))
+        }
     }
 }
 </script>
@@ -34,8 +44,8 @@ export default {
         <ul>
             <li v-for="item, index in navItems"
                 :key="item.path"
-                :class="{ 'active': activeIndex === index }"
-                @click="activeIndex = index">
+                @click="handleClick(index)"
+                :class="{ 'active': activeIndex === index }">
                 <router-link :to="item.path">
                     {{ item.dynamicText
                         ? (token ? item.text : '未登录') : item.text }}

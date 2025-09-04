@@ -3,6 +3,10 @@
     <ul>
         <li v-for="value in goodslist"
             :style="{ 'background-color': color }"
+            @click="$router.push({
+                path: '/gooddesc',
+                query: { id: value.id }
+            })"
             :key="value.id">
             <div class="left">
                 <img :src="'http://43.138.15.137:4000' + value.img">

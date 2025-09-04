@@ -1,7 +1,8 @@
 <template>
 <div class="title">
     {{ title }}
-    <div v-if="back" @click="$router.back()"><span>‹</span>返回</div>
+    <div v-if="back"
+        @click="$router.back()"><span>‹</span>返回</div>
 </div>
 </template>
 
@@ -24,7 +25,7 @@ export default {
 <style scoped
     lang="scss">
     .title {
-        z-index: 999;
+        z-index: 100;
         position: fixed;
         top: 0;
         left: 0;
@@ -41,7 +42,7 @@ export default {
             height: 44px;
             top: 50%;
             left: 10px;
-            transform: translateY(-50%);
+            transform: translateY(-55%);
             font-size: 14px;
 
             span {

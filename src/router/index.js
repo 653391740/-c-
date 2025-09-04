@@ -34,13 +34,18 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: () => import('@/views/login.vue'),
+        component: () => import('@/views/login/login.vue'),
     },
     {
         path: '/goodslist',
         name: 'Goodslist',
         component: () => import('@/views/goodlist.vue'),
-    }
+    },
+    {
+        path: '/gooddesc',
+        name: 'Gooddesc',
+        component: () => import('@/views/gooddesc/index.vue'),
+    },
 ]
 
 const router = new VueRouter({
@@ -48,17 +53,17 @@ const router = new VueRouter({
     routes
 })
 
-const whiteList = ['/login', '/home', '/cate', '/cart', '/user']
+const blackList = ['/cart']
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-    const token = JSON.parse(localStorage.getItem('userinfo')).token;
-    if (whiteList.includes(to.path) || token) {
-        next();
+    const userinfo = localStorage.getItem('userinfo');
+    const token = userinfo ? JSON.parse(userinfo).token : null;
+    if (blackList.includes(to.path) && !token) {
+        next('/login');
     } else {
-        next(from.path);
+        next();
     }
 })
-
 
 export default router
