@@ -44,7 +44,6 @@ export default {
                 const fn = () => {
                     const vm = vnode.context;
                     vm.isShow = el.value === '' ? true : false
-                    vm.msg = el.value === '' ? vm.msg : ''
                 }
                 el.addEventListener('input', () => fn())
                 el.addEventListener('blur', () => fn())
@@ -75,6 +74,7 @@ export default {
         input {
             font-size: 14px;
             height: 35px;
+
             &.input {
                 &::placeholder {
                     color: #ee0a24;
