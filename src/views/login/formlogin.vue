@@ -3,10 +3,12 @@
     <Title back
         title="欢迎登陆"></Title>
     <img src="/src/assets/zbc.png">
-    <Input label="请输入手机号"
-        v-model="form.phone"></Input>
-    <Input label="请输入密码"
-        v-model="form.password"></Input>
+    <Input v-model="form.phone"
+        label="手机号"
+        msg="请填写手机号"></Input>
+    <Input v-model="form.password"
+        label="密码"
+        msg="请填写密码"></Input>
     <button class="loginbtn"
         @click="login">点击登录</button>
     <button class="registerbtn"
@@ -16,9 +18,7 @@
 
 <script>
 import Title from '@/components/title.vue'
-import {
-    login
-} from '@/api/home'
+import { login } from '@/api/login'
 export default {
     name: 'Login',
     data() {

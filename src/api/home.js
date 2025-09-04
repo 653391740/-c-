@@ -1,8 +1,5 @@
 import http from '@/utils/request'
-// 账号密码登录
-export const login = (data) => {
-    return http.post('login', data)
-}
+
 // 首页导航分类
 export const getcate = () => {
     return http.get('getcate')

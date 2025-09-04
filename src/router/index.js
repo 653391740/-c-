@@ -47,6 +47,11 @@ const routes = [
         component: () => import('@/views/login/register.vue'),
     },
     {
+        path: '/smslogin',
+        name: 'Smslogin',
+        component: () => import('@/views/login/smslogin.vue'),
+    },
+    {
         path: '/goodslist',
         name: 'Goodslist',
         component: () => import('@/views/goodlist.vue'),
