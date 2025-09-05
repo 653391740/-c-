@@ -37,6 +37,29 @@ input {
   padding: 0;
 }
 
+input[type="radio"],
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px!important;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  outline: none;
+  -webkit-appearance: none;
+
+  &:checked {
+    transition: all 0.3s;
+    background-color: #1989fa;
+    text-align: center;
+    border: 0;
+
+    &::after {
+      content: '✓';
+      color: #fff;
+    }
+  }
+}
+
 svg {
   width: 24px;
   height: 24px;

@@ -40,6 +40,7 @@ export default {
             if (code === 200) {
                 localStorage.setItem('userinfo', JSON.stringify(list))
                 this.$router.push('/')
+                this.$popupMsg.success('登录成功')
             }
         }
     }
@@ -48,9 +49,6 @@ export default {
 
 <style scoped
     lang="scss">
-
-
-
     .login {
         width: 100%;
         display: flex;

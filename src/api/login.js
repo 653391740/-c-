@@ -12,8 +12,6 @@ export const smslogin = (data) => {
     for (const key in data) {
         formData.append(key, data[key]);
     }
-    console.log(data);
-    
     return http.post('smslogin', formData)
 }
 // 注册

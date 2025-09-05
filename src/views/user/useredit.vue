@@ -87,26 +87,6 @@ export default {
             display: flex;
             align-items: center;
             gap: 10px;
-
-            input {
-                width: 20px;
-                height: 20px;
-                background-color: #fff;
-                border: 1px solid #ccc;
-                border-radius: 50%;
-                outline: none;
-                -webkit-appearance: none;
-
-                &:checked {
-                    background-color: #1989fa;
-                    text-align: center;
-
-                    &::after {
-                        content: '✓';
-                        color: #fff;
-                    }
-                }
-            }
         }
 
         .field {

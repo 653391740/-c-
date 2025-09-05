@@ -15,3 +15,15 @@ export const cartadd = (data) => {
         ...data
     })
 }
+// 购物车商品编辑
+export const cartedit = (data) => {
+    const formData = new URLSearchParams();
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+    return http.post('cartedit', formData)
+}
+// 购物车商品删除
+export const cartdel = (data) => {
+    return http.post('cartdelete', data)
+}

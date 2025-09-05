@@ -44,6 +44,7 @@ export default {
                 if (code === 200) {
                     this.$popupMsg.success(msg)
                     localStorage.setItem('userinfo', JSON.stringify(list))
+                    this.$popupMsg.success('登录成功')
                     setTimeout(() => this.$router.push('/'), 700)
                 }
             } else {
