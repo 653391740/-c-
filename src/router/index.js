@@ -68,6 +68,11 @@ const routes = [
         name: 'Useredit',
         component: () => import('@/views/user/useredit.vue'),
     },
+    {
+        path: '/orderconfirm',
+        name: 'Orderconfirm',
+        component: () => import('@/views/cart/orderconfirm.vue')
+    }
 ]
 
 const router = new VueRouter({

@@ -64,14 +64,14 @@
         width: 100%;
         height: 210px;
         background: linear-gradient(#FF6040, #FF8A80);
-        overflow: hidden;
         color: #fff;
+        position: relative;
 
         .head_user_info {
             display: flex;
             align-items: center;
             position: relative;
-            margin-top: 10px;
+            padding-top: 10px;
 
             .name {
                 margin-left: 10px;
@@ -141,6 +141,7 @@
         .head_user_order {
             position: absolute;
             width: 355px;
+            top: 150px;
             left: 50%;
             transform: translateX(-50%);
             background-color: #fff;

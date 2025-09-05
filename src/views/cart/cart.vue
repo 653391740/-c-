@@ -30,20 +30,9 @@
             </li>
         </ul>
     </div>
-    <div class="foot">
-        <input type="checkbox"
-            v-model="isAll"
-            id="isAll">
-        <label for="isAll">全选</label>
-        <div class="price">
-            <p>
-                <label>合计：</label>
-                <span class="small">¥</span>
-                <span>{{ total }}</span>
-            </p>
-        </div>
-        <button>提交订单</button>
-    </div>
+    <dingdan :isAll.sync="isAll"
+        @submit="submit"
+        :total="total"></dingdan>
     <Dialog :show="dialogShow"
         @close="dialogShow = false"
         @confirm="del">
@@ -54,9 +43,12 @@
 <script>
 import { cartedit, cartdel } from '@/api/cart'
 import Dialog from './dialog.vue'
+import dingdan from '@/components/dingdan.vue'
+
 export default {
     components: {
-        Dialog
+        Dialog,
+        dingdan
     },
     props: {
         list: {
@@ -79,7 +71,6 @@ export default {
             },
             set(val) {
                 this.list.forEach(e => e.status = val ? 1 : 0)
-                console.log(this.list);
             }
         },
         total() {
@@ -89,9 +80,25 @@ export default {
                 }
                 return pre
             }, 0)
-        }
+        },
+        countNumber() {
+            return this.list.reduce((pre, cur) => {
+                if (cur.status === 1) {
+                    return pre + cur.num
+                }
+                return pre
+            }, 0)
+        },
     },
     methods: {
+        submit() {
+            this.$router.push('/orderconfirm')
+            localStorage.setItem('orderData', JSON.stringify({
+                countMoney: this.total,
+                countNumber: this.countNumber,
+                orderData: this.list.filter(e => e.status === 1)
+            }))
+        },
         dialogTrue(id) {
             this.dialogShow = true
             this.delId = id
@@ -157,50 +164,6 @@ export default {
         .top {
             overflow: scroll;
             flex: 1;
-        }
-
-        .foot {
-            width: 100%;
-            height: 50px;
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            background-color: #fff;
-
-            .price {
-                flex: 1;
-                text-align: right;
-                padding-right: 10px;
-
-                label {
-                    font-size: 14px;
-                }
-
-                span {
-                    color: #ff6034;
-                }
-
-                .small {
-                    font-size: 12px;
-                }
-            }
-
-            button {
-                background: linear-gradient(to right, #ff6034, #ee0a24);
-                color: #fff;
-                width: 110px;
-                height: 40px;
-                font-size: 15px;
-                border-radius: 20px;
-            }
-
-            input {
-                margin-right: 5px;
-            }
-
-            label {
-                font-size: 14px;
-            }
         }
 
         ul {

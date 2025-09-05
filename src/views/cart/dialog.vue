@@ -1,16 +1,18 @@
 <template>
-<transition name="fade">
+<transition name="dialog">
     <div class="dialog"
         v-if="show">
-        <div class="box">
-            <div class="title">温馨提示</div>
-            <p>是否要删除？</p>
-            <div class="btn">
-                <span @click="$emit('close')">取消</span>
-                <span @click="$emit('confirm')"
-                    style="color: #ee0a24;">确定</span>
+        <transition name="dia">
+            <div class="box">
+                <div class="title">温馨提示</div>
+                <p>是否要删除？</p>
+                <div class="btn">
+                    <span @click="$emit('close')">取消</span>
+                    <span @click="$emit('confirm')"
+                        style="color: #ee0a24;">确定</span>
+                </div>
             </div>
-        </div>
+        </transition>
     </div>
 </transition>
 </template>
@@ -26,6 +28,27 @@ export default {
 </script>
 <style scoped
     lang="scss">
+
+    .dia-enter-active,
+    .dialog-leave-active {
+        transition: all 0.5s ease;
+    }
+
+    .dialog-enter-active,
+    .dia-leave-active {
+        transition: all 0.3s ease;
+    }
+
+    .dialog-enter,
+    .dialog-leave-to {
+        opacity: 0;
+    }
+
+    .dia-enter,
+    .dia-leave-to {
+        transform: scale(0.3);
+    }
+
     .dialog {
         position: fixed;
         top: 0;
@@ -74,17 +97,6 @@ export default {
                     margin: 0 -.5px;
                 }
             }
-        }
-
-        .fade-enter-active,
-        .fade-leave-active {
-            transition: all 0.3s ease;
-        }
-
-        .fade-enter,
-        .fade-leave-to {
-            opacity: 0;
-            transform: scale(0.5);
         }
     }
 </style>

@@ -24,6 +24,7 @@
                         <p v-if="isshow">¥{{ value.market_price }}</p>
                     </div>
                     <button v-if="button">{{ button }}</button>
+                    <p v-if="value.num"><span>x</span>{{ value.num }}</p>
                 </div>
             </div>
         </li>
@@ -144,6 +145,11 @@ export default {
                         display: flex;
                         justify-content: space-between;
 
+                        &>p {
+                            color: #969799;
+                            color: 10px;
+                        }
+
                         .price {
                             display: flex;
 
@@ -154,7 +160,6 @@ export default {
                             p {
                                 margin-top: 4px;
                                 margin-left: 5px;
-
                                 color: #ccc;
                                 text-decoration: line-through;
                             }
