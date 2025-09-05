@@ -1,0 +1,170 @@
+<template>
+<div class="head_user">
+    <div class="head_user_info">
+        <img src="/src/assets/static.png">
+        <div class="name">
+            <h3>请登录</h3>
+            <p>完善资料让我更懂你</p>
+        </div>
+        <div class="sign">
+            <img src="/src/assets/sign.png">
+            <p>每日签到</p>
+        </div>
+    </div>
+    <ul>
+        <li>
+            <span>12</span>
+            <p>我的搜藏</p>
+        </li>
+        <li>
+            <span>12</span>
+            <p>浏览记录</p>
+        </li>
+        <li>
+            <span>¥ 0</span>
+            <p>我的红包</p>
+        </li>
+        <li>
+            <span>12</span>
+            <p>优惠卷</p>
+        </li>
+    </ul>
+    <div class="head_user_order">
+        <div class="top">
+            <h4>我的订单</h4>
+            <a href="#">全部订单 ></a>
+        </div>
+        <ul>
+            <li>
+                <img src="/src/assets/fk.png">
+                <p>待付款</p>
+            </li>
+            <li>
+                <img src="/src/assets/fh.png">
+                <p>待发货</p>
+            </li>
+            <li>
+                <img src="/src/assets/qr.png">
+                <p>待确认</p>
+            </li>
+            <li>
+                <img src="/src/assets/sh.png">
+                <p>售后/退款</p>
+            </li>
+        </ul>
+    </div>
+</div>
+</template>
+
+
+
+<style scoped
+    lang="scss">
+    .head_user {
+        width: 100%;
+        height: 210px;
+        background: linear-gradient(#FF6040, #FF8A80);
+        overflow: hidden;
+        color: #fff;
+
+        .head_user_info {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-top: 10px;
+
+            .name {
+                margin-left: 10px;
+
+                h3 {
+                    font-weight: normal;
+                }
+
+                p {
+                    border: 1px solid #fff;
+                    font-size: 10px;
+                    padding: 0 7px;
+                }
+            }
+
+            &>img {
+                width: 64px;
+                height: 64px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-left: 10px;
+            }
+
+            .sign {
+                width: 76px;
+                height: 20px;
+                position: absolute;
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                background-color: #FFD4CC;
+                border-radius: 10px 0 0 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                color: #FF6040;
+                font-size: 10px;
+
+                img {
+                    width: 16px;
+                    height: 16px;
+                    margin-left: 7px;
+                }
+            }
+
+        }
+
+        ul {
+            margin-top: 10px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+
+            li {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-size: 18px;
+
+                p {
+                    font-size: 10px;
+                }
+            }
+        }
+
+        .head_user_order {
+            position: absolute;
+            width: 355px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 10px 10px 15px 10px;
+            color: #333;
+
+            .top {
+                display: flex;
+                justify-content: space-between;
+
+                a {
+                    font-size: 12px;
+                    color: #FF6040;
+                }
+            }
+
+            ul {
+                height: auto;
+            }
+
+            img {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    }
+</style>
