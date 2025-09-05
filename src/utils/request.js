@@ -1,5 +1,5 @@
 import axios from "axios";
-import msg from '../components'
+import { msg } from '../components/index'
 const service = axios.create({
     baseURL: 'http://43.138.15.137:4000/api/',
     timeout: 5000

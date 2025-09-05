@@ -40,6 +40,9 @@ export default {
         },
         info(msg, duration = 2000) {
             this.show(msg, duration, 'info')
+        },
+        warn(msg, duration = 2000) {
+            this.show(msg, duration, 'warn')
         }
     }
 }
@@ -68,6 +71,10 @@ export default {
 
         &.info {
             background-color: #2196F3; // 信息提示蓝色
+        }
+
+        &.warn {
+            background-color: #ff976a; // 警告黄色
         }
     }
 

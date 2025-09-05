@@ -16,13 +16,15 @@ const popupInstance = new PopupMsgConstructor()
 popupInstance.$mount()
 document.body.appendChild(popupInstance.$el)
 
-// 添加到Vue原型上
-Vue.prototype.$msg = function (message, duration = 2000) {
+const msg = function (message, duration = 2000) {
   instance.show(message, duration)
 }
+// 添加到Vue原型上
+Vue.prototype.$msg = msg
+
 
 // 创建popupMsg函数实例
-const popupMsg = function(message, duration = 2000) {
+const popupMsg = function (message, duration = 2000) {
   popupInstance.info(message, duration)
   return popupMsg
 }
@@ -40,6 +42,10 @@ popupMsg.success = function (message, duration = 2000) {
   popupInstance.success(message, duration)
   return this
 }
+popupMsg.warn = function (message, duration = 2000) {
+  popupInstance.warn(message, duration)
+  return this
+}
 
 Vue.prototype.$popupMsg = popupMsg
 
@@ -50,3 +56,6 @@ export default function (message, duration = 2000) {
 
 // 导出popupmsg组件
 export { PopupMsgComponent }
+
+// 导出popupMsg函数，以便在非Vue上下文中使用
+export { popupMsg, msg }

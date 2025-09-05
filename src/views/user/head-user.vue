@@ -3,8 +3,8 @@
     <div class="head_user_info">
         <img src="/src/assets/static.png">
         <div class="name">
-            <h3>请登录</h3>
-            <p>完善资料让我更懂你</p>
+            <h3 @click="$router.push('/login')">请登录</h3>
+            <p @click="$router.push('/useredit')">完善资料让我更懂你</p>
         </div>
         <div class="sign">
             <img src="/src/assets/sign.png">

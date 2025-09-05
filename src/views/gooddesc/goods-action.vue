@@ -17,7 +17,7 @@
     <button class="button-first"
         @click="showPopup = true">加入购物车</button>
     <button class="button-last">立即购买</button>
-    <Popup :showPopup.sync="showPopup"
+    <Popup :show.sync="showPopup"
         @addCart="handleAddCart"></Popup>
 </div>
 </template>

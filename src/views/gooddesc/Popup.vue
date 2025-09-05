@@ -1,63 +1,63 @@
 <template>
-<div :class="['popup', { 'show': showPopup }]"
-    @click="togglePopup">
-    <div class="popup-content"
-        @click.stop>
-        <span class="popup-close"
-            @click="togglePopup">×</span>
-        <div class="head">
-            <img :src="img">
-            <div>
-                <p><span>¥</span>30000</p>
-                <span>剩余 400 件</span>
-                <span>请选择 {{ color ? '' : '颜色' }}
-                    {{ gMemory ? '' : '内存' }} </span>
-            </div>
-        </div>
-        <div class="item">
-            <div class="title">颜色</div>
-            <ul>
-                <li :class="{ 'active': color === 'blue' }"
-                    @click="handleColor('blue', $event)">
-                    <img src="https://img14.360buyimg.com/n0/jfs/t1/195251/28/503/70907/608a8bc4E87eaf1ae/9aa39ad669ed7f39.jpg">
-                    <p>蓝色</p>
-                </li>
-                <li :class="{ 'active': color === 'pink' }"
-                    @click="handleColor('pink', $event)">
-                    <img src="https://img14.360buyimg.com/n0/jfs/t1/131776/9/23287/325305/621f295fE9dc6a3ce/117b4d1ed262266a.jpg">
-                    <p>粉色</p>
-                </li>
-            </ul>
-        </div>
-        <div class="item">
-            <div class="title">内存</div>
-            <button :class="{ 'active': gMemory === '4' }"
-                @click="handleMemory('4')">4G</button>
-            <button :class="{ 'active': gMemory === '8' }"
-                @click="handleMemory('8')">8G</button>
-        </div>
-        <div class="item">
-            <div class="title">购买数量
-                <div class="count">
-                    <button @click="num > 1 ? num-- : num = 1"
-                        :style="{
-                            backgroundColor: num > 1 ? '#f2f3f5' : '#f7f8fa'
-                        }">-</button>
-                    <p>{{ num }}</p>
-                    <button @click="num++">+</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="button">
-            <button @click="$emit('addCart', { num, color, gMemory })">加入购物车</button>
-            <button>立即购买</button>
+<Popup :show="show" @close="togglePopup">
+    <div class="head">
+        <img :src="img">
+        <div>
+            <p><span>¥</span>30000</p>
+            <span>剩余 400 件</span>
+            <span>请选择 {{ color ? '' : '颜色' }}
+                {{ gMemory ? '' : '内存' }} </span>
         </div>
     </div>
-</div>
+    <div class="item">
+        <div class="title">颜色</div>
+        <ul>
+            <li :class="{ 'active': color === 'blue' }"
+                @click="handleColor('blue', $event)">
+                <img src="https://img14.360buyimg.com/n0/jfs/t1/195251/28/503/70907/608a8bc4E87eaf1ae/9aa39ad669ed7f39.jpg">
+                <p>蓝色</p>
+            </li>
+            <li :class="{ 'active': color === 'pink' }"
+                @click="handleColor('pink', $event)">
+                <img src="https://img14.360buyimg.com/n0/jfs/t1/131776/9/23287/325305/621f295fE9dc6a3ce/117b4d1ed262266a.jpg">
+                <p>粉色</p>
+            </li>
+        </ul>
+    </div>
+    <div class="item">
+        <div class="title">内存</div>
+        <button :class="{ 'active': gMemory === '4' }"
+            @click="handleMemory('4')">4G</button>
+        <button :class="{ 'active': gMemory === '8' }"
+            @click="handleMemory('8')">8G</button>
+    </div>
+    <div class="item">
+        <div class="title">购买数量
+            <div class="count">
+                <button @click="num > 1 ? num-- : num = 1"
+                    :style="{
+                        backgroundColor: num > 1 ? '#f2f3f5' : '#f7f8fa'
+                    }">-</button>
+                <p>{{ num }}</p>
+                <button @click="num++">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="button">
+        <button @click="$emit('addCart', {
+            num,
+            color,
+            gMemory
+        })">加入购物车</button>
+        <button>立即购买</button>
+    </div>
+</Popup>
 </template>
 
 <script>
+import Popup from '@/components/Popup.vue';
+
 export default {
     data() {
         return {
@@ -67,8 +67,11 @@ export default {
             img: JSON.parse(sessionStorage.getItem('img'))
         }
     },
+    components: {
+        Popup
+    },
     props: {
-        showPopup: {
+        show: {
             type: Boolean,
             default: false
         }
@@ -92,8 +95,8 @@ export default {
             this.gMemory = gMemory
         },
         togglePopup() {
-            if (this.showPopup) {
-                this.$emit('update:showPopup', false);
+            if (this.show) {
+                this.$emit('update:show', false);
             }
         }
     }

@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { popupMsg } from '@/components/index'
+
 
 Vue.use(VueRouter)
 
@@ -61,6 +63,11 @@ const routes = [
         name: 'Gooddesc',
         component: () => import('@/views/gooddesc/index.vue'),
     },
+    {
+        path: '/useredit',
+        name: 'Useredit',
+        component: () => import('@/views/user/useredit.vue'),
+    },
 ]
 
 const router = new VueRouter({
@@ -76,6 +83,7 @@ router.beforeEach((to, from, next) => {
     const token = userinfo ? JSON.parse(userinfo).token : null;
     if (blackList.includes(to.path) && !token) {
         next('/login');
+        popupMsg.warn('请先登录');
     } else {
         next();
     }

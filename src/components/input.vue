@@ -1,7 +1,10 @@
 <template>
-<div class="item">
+<div class="item"
+    :style="{ 'padding-bottom': hasslot ? '10px' : '25px' }">
     <p>{{ label }}</p>
+    <slot v-if="hasslot"></slot>
     <input type="text"
+        v-else
         v-input
         :placeholder="label"
         :value="value"
@@ -24,6 +27,10 @@ export default {
         value: {
             type: String,
             default: ''
+        },
+        hasslot: {
+            type: Boolean,
+            default: false
         },
         msg: {
             type: String,
@@ -62,10 +69,10 @@ export default {
         width: 90%;
         border-bottom: 1px solid #e3e3e3;
         display: flex;
-        align-items: center;
         position: relative;
 
         p {
+            margin-top: 5px;
             width: 30%;
             font-size: 14px;
             color: #646566;
