@@ -1,9 +1,9 @@
 <template>
-<div class="cart-box"
-    @touchstart="removeTrue">
+<div class="cart-box">
     <div class="top">
         <ul>
             <li v-for="e, i in list"
+                @click="cl"
                 @touchstart="touchstart($event, i)"
                 @touchmove="touchmove($event, i)"
                 @touchend="touchend($event, i)"
@@ -60,8 +60,11 @@ export default {
         return {
             dialogShow: false,
             startX: 0,
-            endX: 0,
+            startY: 0,
+            moveX: 0,
+            moveY: 0,
             delId: 0,
+            slideDirection: null
         }
     },
     computed: {
@@ -92,6 +95,7 @@ export default {
     },
     methods: {
         submit() {
+            if (this.list.filter(e => e.status === 1).length === 0) return this.$msg('请先选择需要购买的商品信息')
             this.$router.push('/orderconfirm')
             localStorage.setItem('orderData', JSON.stringify({
                 countMoney: this.total,
@@ -103,12 +107,6 @@ export default {
             this.dialogShow = true
             this.delId = id
         },
-        removeTrue() {
-            this.list.forEach((e, i) => {
-                e.isdel = false
-                this.$refs.li[i].style.transform = `translateX(0px)`
-            });
-        },
         async del() {
             this.dialogShow = false
             const { code, msg } = await cartdel({ id: this.delId })
@@ -118,25 +116,56 @@ export default {
                 this.list.splice(index, 1)
             }
         },
-        touchstart(e, i) { this.startX = e.touches[0].clientX },
-        touchend(e, i) {
-            this.$refs.li[i].style.transition = `all .5s`
-            this.endX = e.changedTouches[0].clientX
-            if (this.endX - this.startX < -5) {
-                this.$refs.li[i].style.transform = `translateX(-60px)`
-                this.list[i].isdel = true
-            } else {
+        touchstart(e, i) {
+            const index = this.list.findIndex(e => e.isdel)
+            if (index !== i) this.cl()
+            this.startX = e.touches[0].clientX
+            this.startY = e.touches[0].clientY
+            this.slideDirection = null
+        },
+        cl() {
+            this.list.forEach((e, i) => {
+                e.isdel = false
                 this.$refs.li[i].style.transform = `translateX(0px)`
-                this.list[i].isdel = false
+            });
+        },
+        touchend(e, i) {
+            if (this.slideDirection === 'horizontal') {
+                this.$refs.li[i].style.transition = `all .5s`
+                this.moveX = e.changedTouches[0].clientX
+                const deltaX = this.moveX - this.startX
+                if (deltaX < -10) {
+                    this.$refs.li[i].style.transform = `translateX(-60px)`
+                    this.list[i].isdel = true
+                } else if (deltaX > 10) {
+                    this.$refs.li[i].style.transform = `translateX(0px)`
+                    this.list[i].isdel = false
+                }
             }
         },
         touchmove(e, i) {
-            this.endX = e.changedTouches[0].clientX
-            this.$refs.li[i].style.transition = `none`
-            const startX = this.list[i].isdel ? -60 : 0 + this.endX - this.startX
-            this.$refs.li[i].style.transform
-                = `translateX(${startX < -60 ? -60
-                    : startX > 0 ? 0 : startX}px)`
+            this.moveX = e.changedTouches[0].clientX
+            this.moveY = e.changedTouches[0].clientY
+
+            const deltaX = this.moveX - this.startX
+            const deltaY = this.moveY - this.startY
+
+            if (this.slideDirection === null) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    this.slideDirection = 'horizontal'
+                } else {
+                    this.slideDirection = 'vertical'
+                }
+            }
+
+            if (this.slideDirection === 'horizontal') {
+                this.$refs.li[i].style.transition = `none`
+                this.moveX = e.changedTouches[0].clientX
+                const startX = (this.list[i].isdel ? -60 : 0) + this.moveX - this.startX
+                this.$refs.li[i].style.transform
+                    = `translateX(${startX < -60 ? -60
+                        : startX > 0 ? 0 : startX}px)`
+            }
         },
         changeNum(id, type) {
             const find = this.list.find(e => e.id === id)
@@ -151,10 +180,6 @@ export default {
 
 <style scoped
     lang="scss">
-    input[type="checkbox"]:checked {
-        background-color: #ff6040;
-    }
-
     .cart-box {
         height: 100%;
         display: flex;

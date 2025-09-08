@@ -1,10 +1,10 @@
 <template>
 <div :class="['popup', { 'show': show }]"
-    @click="togglePopup">
+    @click="$emit('update:show', false)">
     <div class="popup-content"
         @click.stop>
         <span class="popup-close"
-            @click="togglePopup">×</span>
+            @click="$emit('update:show', false)">×</span>
         <slot></slot>
     </div>
 </div>
@@ -16,13 +16,6 @@ export default {
         show: {
             type: Boolean,
             default: false
-        }
-    },
-    methods: {
-        togglePopup() {
-            if (this.show) {
-                this.$emit('close', false);
-            }
         }
     }
 }
@@ -75,7 +68,7 @@ export default {
                 }
             }
 
-            
+
 
             .popup-close {
                 position: absolute;
@@ -85,6 +78,7 @@ export default {
                 line-height: 1;
                 font-weight: bold;
                 color: #c8c9cc;
+                z-index: 99;
             }
         }
 
@@ -97,6 +91,4 @@ export default {
             }
         }
     }
-
-
 </style>

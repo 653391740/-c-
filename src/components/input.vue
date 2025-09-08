@@ -70,8 +70,12 @@ export default {
         border-bottom: 1px solid #e3e3e3;
         display: flex;
         position: relative;
+        &>*{
+            flex: 1;
+        }
 
         p {
+            flex: 0 0 auto;
             margin-top: 5px;
             width: 30%;
             font-size: 14px;

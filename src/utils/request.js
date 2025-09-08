@@ -23,6 +23,7 @@ service.interceptors.response.use(response => {
     if (code === 403) {
         msg('登录过期请重新登录')
         localStorage.removeItem('userinfo')
+        window.location.href = '/login'
     }
     return response.data;
 }, error => {

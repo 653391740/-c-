@@ -38,6 +38,7 @@ export default {
 <style scoped
   lang="scss">
   .msg {
+    text-align: center;
     padding: 10px 15px;
     position: fixed;
     top: 50%;

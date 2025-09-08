@@ -17,13 +17,16 @@
     <button class="button-first"
         @click="showPopup = true">加入购物车</button>
     <button class="button-last">立即购买</button>
-    <Popup :show.sync="showPopup"
-        @addCart="handleAddCart"></Popup>
+    <Popup :show.sync="showPopup">
+        <Popups @addCart="handleAddCart"></Popups>
+    </Popup>
 </div>
 </template>
 <script>
 import { cartlist, cartadd } from '@/api/cart'
-import Popup from './Popup.vue'
+import Popup from '@/components/Popup.vue'
+import Popups from './Popup.vue'
+
 export default {
     data() {
         return {
@@ -64,6 +67,7 @@ export default {
         }
     },
     components: {
+        Popups,
         Popup
     }
 }

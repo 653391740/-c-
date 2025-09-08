@@ -3,13 +3,15 @@
     <Title title="编辑会员信息"
         back></Title>
     <Input label="用户昵称"
-        msg="请输入用户昵称"></Input>
+        msg="请输入用户昵称"
+        v-model="userinfo.nickname"></Input>
     <Input hasslot
         label="会员头像">
     <div class="field">
         <div class="img-item"
             v-for="(e, index) in img">
-            <img :src="e.url"
+            <img :src="e.url && e.url.includes('uploads')
+                ? 'http://43.138.15.137:4000' + e.url : e.url"
                 alt="">
             <div class="img-item-del"
                 @click="del(index)">×
@@ -31,36 +33,67 @@
         <input type="radio"
             id="man"
             name="gender"
-            value="1">
+            value="1"
+            v-model="userinfo.sex">
         <label for="man">男</label>
         <input type="radio"
             id="woman"
             name="gender"
-            value="2">
+            value="2"
+            v-model="userinfo.sex">
         <label for="woman">女</label>
     </div>
     </Input>
     <Input label="日历"
         hasslot>
-    <div class="birthday">
-
-    </div>
+    <div class="birthday"
+        @click="showCalendar = true">{{ userinfo.birthday }}</div>
     </Input>
+    <Input label="地区选择"
+        hasslot>
+    <div class="region"
+        @click="showRegion = true">{{ userinfo.region }}</div>
+    </Input>
+    <Popup :show.sync="showCalendar">
+        <Calendar @date-selected="selectDate"></Calendar>
+    </Popup>
+    <Popup :show.sync="showRegion">
+        <Region></Region>
+    </Popup>
 </div>
 </template>
 
 <script>
+import { getuserinfo } from '@/api/login'
+import Popup from '@/components/Popup.vue';
 import Title from '@/components/title.vue'
+import Calendar from './calendar.vue'
+import Region from './region.vue'
 export default {
     components: {
-        Title
+        Title,
+        Popup,
+        Calendar,
+        Region
     },
     data() {
         return {
-            img: []
+            img: [],
+            userinfo: {},
+            showCalendar: false,
+            showRegion: false
         }
     },
+    mounted() {
+        this.getuserinfo()
+    },
     methods: {
+        selectDate(date) {
+            const dates = new Date(date);
+            const birthday = `${dates.getMonth() + 1}/${dates.getDate()}`;
+            this.userinfo.birthday = birthday
+            this.showCalendar = false
+        },
         handlchange(e) {
             let file = e.target.files[0]
             let reader = new FileReader()
@@ -71,7 +104,20 @@ export default {
                     url: reader.result
                 })
             }
-        }
+        },
+        async getuserinfo() {
+            let { code, list } = await getuserinfo()
+            if (code === 200) {
+                this.userinfo = list[0]
+                this.img = [{
+                    url: list[0].avatarurl
+                }]
+                console.log(this.userinfo);
+            }
+        },
+        del(index) {
+            this.img.splice(index, 1)
+        },
     }
 }
 </script>

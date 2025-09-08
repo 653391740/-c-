@@ -1,5 +1,5 @@
 <template>
-<Popup :show="show" @close="togglePopup">
+<div class="popups">
     <div class="head">
         <img :src="img">
         <div>
@@ -52,12 +52,10 @@
         })">加入购物车</button>
         <button>立即购买</button>
     </div>
-</Popup>
+</div>
 </template>
 
 <script>
-import Popup from '@/components/Popup.vue';
-
 export default {
     data() {
         return {
@@ -67,16 +65,8 @@ export default {
             img: JSON.parse(sessionStorage.getItem('img'))
         }
     },
-    components: {
-        Popup
-    },
-    props: {
-        show: {
-            type: Boolean,
-            default: false
-        }
-    },
     mounted() {
+
     },
     methods: {
         handleColor(color, e) {
@@ -105,189 +95,156 @@ export default {
 
 <style scoped
     lang="scss">
-    .popup {
-        transition: all .2s linear;
-        position: fixed;
-        z-index: -1;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+    .popups {
+        padding-top: 16px;
 
-        .popup-content {
-            position: absolute;
-            transition: all .2s ease-in-out;
-            transform: translateY(100%);
-            bottom: 0;
-            width: 100%;
-            background-color: #fff;
-            border-radius: 20px 20px 0 0;
-            padding: 0 16px;
-            max-height: 80%;
-            min-height: 50%;
+        .button {
+            display: flex;
+            padding: 12px 0;
 
-            .button {
+            button:first-child {
+                border-radius: 20px 0 0 20px;
+                background: linear-gradient(to right, #ffd01e, #ff8917);
+            }
+
+            button:last-child {
+                border-radius: 0 20px 20px 0;
+                background: linear-gradient(to right, #ff6034, #ee0a24);
+            }
+
+            button {
+                flex: 1;
+                height: 40px;
+                font-size: 15px;
+                color: #fff;
+            }
+        }
+
+        .head {
+            display: flex;
+            gap: 12px;
+
+            img {
+                width: 96px;
+                height: 96px;
+                border-radius: 5px;
+                object-fit: cover;
+            }
+
+            div {
                 display: flex;
+                flex-direction: column;
+                justify-content: end;
+
+                p {
+                    font-size: 22px;
+                    color: #ee0a24;
+
+                    span {
+                        font-size: 16px;
+                    }
+                }
+
+                &>span {
+                    color: #969799;
+                    font-size: 12px;
+                    line-height: 1;
+                    margin-top: 8px;
+                }
+            }
+        }
+
+        .item {
+            border-top: 1px solid #f0e8e8;
+            margin-top: 10px;
+
+            .title {
                 padding: 12px 0;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .count {
+                display: flex;
+                align-items: center;
+                gap: 2px;
 
                 button:first-child {
-                    border-radius: 20px 0 0 20px;
-                    background: linear-gradient(to right, #ffd01e, #ff8917);
+                    border-radius: 4px 0 0 4px;
                 }
 
                 button:last-child {
-                    border-radius: 0 20px 20px 0;
-                    background: linear-gradient(to right, #ff6034, #ee0a24);
+                    border-radius: 0 4px 4px 0;
+                }
+
+
+                p {
+                    background-color: #f2f3f5;
+                    text-align: center;
+                    width: 32px;
+                    font-size: 14px;
+                    line-height: 28px;
                 }
 
                 button {
-                    flex: 1;
-                    height: 40px;
-                    font-size: 15px;
-                    color: #fff;
+                    height: 28px;
                 }
             }
 
-            .head {
-                padding-top: 12px;
+            &>button {
+                font-size: 13px;
+                padding: 8px 10px;
+                background-color: #f7f8fa;
+                margin-right: 10px;
+
+                &.active {
+                    color: #ee0a24;
+                    background-color: #fde6e9;
+                }
+            }
+
+            ul {
                 display: flex;
                 gap: 12px;
 
-                img {
-                    width: 96px;
-                    height: 96px;
+                li {
+                    width: 110px;
                     border-radius: 5px;
-                    object-fit: cover;
-                }
-
-                div {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: end;
-
-                    p {
-                        font-size: 22px;
-                        color: #ee0a24;
-
-                        span {
-                            font-size: 16px;
-                        }
-                    }
-
-                    &>span {
-                        color: #969799;
-                        font-size: 12px;
-                        line-height: 1;
-                        margin-top: 8px;
-                    }
-                }
-            }
-
-            .item {
-                border-top: 1px solid #f0e8e8;
-                margin-top: 10px;
-
-                .title {
-                    padding: 12px 0;
-                    display: flex;
-                    justify-content: space-between;
-                }
-
-                .count {
-                    display: flex;
-                    align-items: center;
-                    gap: 2px;
-
-                    button:first-child {
-                        border-radius: 4px 0 0 4px;
-                    }
-
-                    button:last-child {
-                        border-radius: 0 4px 4px 0;
-                    }
-
-
-                    p {
-                        background-color: #f2f3f5;
-                        text-align: center;
-                        width: 32px;
-                        font-size: 14px;
-                        line-height: 28px;
-                    }
-
-                    button {
-                        height: 28px;
-                    }
-                }
-
-                &>button {
-                    font-size: 13px;
-                    padding: 8px 10px;
-                    background-color: #f7f8fa;
-                    margin-right: 10px;
+                    overflow: hidden;
+                    border: 1px solid transparent;
 
                     &.active {
-                        color: #ee0a24;
-                        background-color: #fde6e9;
-                    }
-                }
-
-                ul {
-                    display: flex;
-                    gap: 12px;
-
-                    li {
-                        width: 110px;
-                        border-radius: 5px;
-                        overflow: hidden;
-                        border: 1px solid transparent;
-
-                        &.active {
-                            border: 1px solid #ee0a24;
-
-                            p {
-                                color: #ee0a24;
-                                background-color: #fde6e9;
-                            }
-                        }
-
-                        img {
-                            width: 100%;
-                            height: 110px;
-                        }
+                        border: 1px solid #ee0a24;
 
                         p {
-                            line-height: 40px;
-                            font-size: 12px;
-                            text-align: center;
-                            background-color: #f7f8fa;
+                            color: #ee0a24;
+                            background-color: #fde6e9;
                         }
+                    }
+
+                    img {
+                        width: 100%;
+                        height: 110px;
+                    }
+
+                    p {
+                        line-height: 40px;
+                        font-size: 12px;
+                        text-align: center;
+                        background-color: #f7f8fa;
                     }
                 }
             }
-
-            .popup-close {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                font-size: 25px;
-                line-height: 1;
-                font-weight: bold;
-                color: #c8c9cc;
-            }
         }
 
-        &.show {
-            opacity: 1;
-            z-index: 110;
-
-            .popup-content {
-                transform: translateY(0);
-            }
+        .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 25px;
+            line-height: 1;
+            font-weight: bold;
+            color: #c8c9cc;
         }
     }
-
-
 </style>

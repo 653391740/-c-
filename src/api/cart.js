@@ -27,3 +27,15 @@ export const cartedit = (data) => {
 export const cartdel = (data) => {
     return http.post('cartdelete', data)
 }
+// 地址列表
+export const addresslist = () => {
+    return http.get(`addresslist`, { params: { uid: JSON.parse(localStorage.getItem('userinfo')).uid } })
+}
+export const orderlist = (data) => {
+    return http.get(`orderlist`, {
+        params: {
+            ...data,
+            uid: JSON.parse(localStorage.getItem('userinfo')).uid
+        }
+    })
+}

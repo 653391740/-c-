@@ -72,7 +72,17 @@ const routes = [
         path: '/orderconfirm',
         name: 'Orderconfirm',
         component: () => import('@/views/cart/orderconfirm.vue')
-    }
+    },
+    {
+        path: '/addresslist',
+        name: 'Addresslist',
+        component: () => import('@/views/addresslist.vue')
+    },
+    {
+        path: '/orderlist',
+        name: 'Orderlist',
+        component: () => import('@/views/orderlist.vue')
+    },
 ]
 
 const router = new VueRouter({

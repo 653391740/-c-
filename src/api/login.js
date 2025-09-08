@@ -22,3 +22,10 @@ export const register = (data) => {
     }
     return http.post('register', formData)
 }
+export const getuserinfo = () => {
+    return http.get('getuserinfo', {
+        params: {
+            uid: JSON.parse(localStorage.getItem('userinfo')).uid,
+        }
+    })
+}

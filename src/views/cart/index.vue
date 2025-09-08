@@ -1,6 +1,6 @@
 <template>
 <div class="cart">
-    <Title title="首页"></Title>
+    <Title title="购物车"></Title>
     <div class="empty"
         v-if="!list.length">
         <img src="/src/assets/default.png">

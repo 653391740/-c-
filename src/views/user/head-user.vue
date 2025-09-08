@@ -1,9 +1,9 @@
 <template>
 <div class="head_user">
     <div class="head_user_info">
-        <img src="/src/assets/static.png">
+        <img :src="userinfo.avatarurl ? 'http://43.138.15.137:4000' + userinfo.avatarurl : '/src/assets/static.png'">
         <div class="name">
-            <h3 @click="$router.push('/login')">请登录</h3>
+            <h3 @click="userinfo.uid ? '' : $router.push('/login')">{{ userinfo.nickname ? userinfo.nickname : '请登录' }}</h3>
             <p @click="$router.push('/useredit')">完善资料让我更懂你</p>
         </div>
         <div class="sign">
@@ -35,28 +35,44 @@
             <a href="#">全部订单 ></a>
         </div>
         <ul>
-            <li>
-                <img src="/src/assets/fk.png">
-                <p>待付款</p>
-            </li>
-            <li>
-                <img src="/src/assets/fh.png">
-                <p>待发货</p>
-            </li>
-            <li>
-                <img src="/src/assets/qr.png">
-                <p>待确认</p>
-            </li>
-            <li>
-                <img src="/src/assets/sh.png">
-                <p>售后/退款</p>
+            <li v-for="(item, index) in orderStatusList"
+                :key="index"
+                @click="$router.push('/orderlist')">
+                <img :src="item.icon">
+                <p>{{ item.text }}</p>
             </li>
         </ul>
     </div>
 </div>
 </template>
 
-
+<script>
+export default {
+    data() {
+        return {
+            userinfo: JSON.parse(localStorage.getItem('userinfo')),
+            orderStatusList: [
+                {
+                    icon: '/src/assets/fk.png',
+                    text: '待付款'
+                },
+                {
+                    icon: '/src/assets/fh.png',
+                    text: '待发货'
+                },
+                {
+                    icon: '/src/assets/qr.png',
+                    text: '待确认'
+                },
+                {
+                    icon: '/src/assets/sh.png',
+                    text: '售后/退款'
+                }
+            ]
+        }
+    }
+}
+</script>
 
 <style scoped
     lang="scss">

@@ -1,6 +1,11 @@
 <template>
 <ul class="resDetail">
-    <li>
+    <li @click="$router.push({
+        path: '/addresslist',
+        query: {
+            type: 2
+        }
+    })">
         <p class="iconfont icon-ditu">地址管理</p>
         <a href="#">></a>
     </li>
