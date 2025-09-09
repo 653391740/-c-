@@ -88,6 +88,11 @@ const routes = [
         name: 'Addressadd',
         component: () => import('@/views/address/addressadd.vue')
     },
+    {
+        path: '/pay',
+        name: 'Pay',
+        component: () => import('@/views/pay.vue')
+    },
 ]
 
 const router = new VueRouter({

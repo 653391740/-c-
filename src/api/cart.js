@@ -31,6 +31,7 @@ export const cartdel = (data) => {
 export const addresslist = () => {
     return http.get(`addresslist`, { params: { uid: JSON.parse(localStorage.getItem('userinfo')).uid } })
 }
+// 订单列表
 export const orderlist = (data) => {
     return http.get(`orderlist`, {
         params: {
@@ -38,4 +39,11 @@ export const orderlist = (data) => {
             uid: JSON.parse(localStorage.getItem('userinfo')).uid
         }
     })
+}
+// 订单详情
+export const orderadd = (data) => {
+    return http.post(`orderadd`, data)
+}
+export const alipay = (data) => {
+    return http.post(`alipay`, data)
 }

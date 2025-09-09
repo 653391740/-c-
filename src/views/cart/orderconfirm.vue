@@ -22,15 +22,15 @@
     </div>
     <Goodslist :goodslist="orderData.orderData"></Goodslist>
     <Dingdan class="dingdan"
-        :total="orderData.countMoney"
-        @submit="$router.push('/')"></Dingdan>
+        :total="orderData.countmoney"
+        @submit="submit"></Dingdan>
 </div>
 </template>
 <script>
 import Title from '@/components/title.vue'
 import Dingdan from '@/components/dingdan.vue'
 import Goodslist from '@/components/goodslist.vue'
-import { addresslist } from '@/api/cart'
+import { addresslist, orderadd } from '@/api/cart'
 export default {
     components: {
         Dingdan,
@@ -47,6 +47,24 @@ export default {
         this.addresslist()
     },
     methods: {
+        async submit() {
+            const { countmoney, countnumber } = this.orderData
+            const data = {
+                uid: JSON.parse(localStorage.getItem('userinfo')).uid,
+                addressid: this.address.id,
+                countmoney,
+                countnumber,
+                idstr: this.orderData.orderData.map(item => item.id).join(','),
+            }
+            const { list: { outTradeNo } } = await orderadd(data)
+            this.$router.push({
+                path: '/pay',
+                query: {
+                    outTradeNo,
+                    totalAmount: countmoney
+                }
+            })
+        },
         async addresslist() {
             if (this.$route.query.id) return this.address = this.$route.query
             const { list } = await addresslist()

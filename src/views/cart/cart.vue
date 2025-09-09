@@ -98,8 +98,8 @@ export default {
             if (this.list.filter(e => e.status === 1).length === 0) return this.$msg('请先选择需要购买的商品信息')
             this.$router.push('/orderconfirm')
             localStorage.setItem('orderData', JSON.stringify({
-                countMoney: this.total,
-                countNumber: this.countNumber,
+                countmoney: this.total,
+                countnumber: this.countNumber,
                 orderData: this.list.filter(e => e.status === 1)
             }))
         },

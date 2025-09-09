@@ -1,6 +1,7 @@
 <template>
 <div class="calendar">
     <ul @touchstart="handleTouchStart($event, 0)"
+        @wheel="handleWheel($event, 0)"
         @touchmove="handleTouchMove($event, 0)"
         @touchend="handleTouchEnd($event, 0)">
         <li v-for="(e, i) in regionlist"
@@ -75,6 +76,10 @@ export default {
         },
     },
     methods: {
+        handleWheel(e, i) {
+            e.preventDefault()
+            console.log(e.deltaY);
+        },
         handleClick(e, i, index) {
             this.Y[i].MoveY = -index * 44;
         },
@@ -87,35 +92,37 @@ export default {
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
-            const num = (i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1;
             const dome = this.$el.children[i]
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
-            const scrollToTheBottom = -num * 44
-            console.log(scrollToTheBottom);
-
+            const scrollToTheBottom = this.num(i)
             const now = new Date();
             const deltaTime = now - this.lastMoveTime;// 移动时间距上次差多少毫秒
             const deltaMove = scrollDistance - this.Y[i].MoveY;// 移动距离距上次差多少px
             this.Y[i].Velocity = deltaMove / deltaTime; // 移动速度px/ms
-            this.Y[i].LastMoveY = this.Y[i].MoveY;
+            this.Y[i].LastMoveY = this.Y[i].MoveY; // 上一次移动的位置
+
             // 限制滚动范围，不能超过顶部和底部边界
             this.Y[i].MoveY = scrollDistance > 0 ? 0
                 : scrollDistance < scrollToTheBottom
                     ? scrollToTheBottom : scrollDistance;
+            // 关闭过渡跟随手动滑动
             dome.style.transition = 'none';
             dome.style.transform = `translateY(${this.Y[i].MoveY}px)`;
+
             this.lastMoveTime = now;
         },
+        num(i) {
+            return -((i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1) * 44
+        },
         handleTouchEnd(e, i) {
-            const num = (i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1;
-            const dome = this.$el.children[i] // 获取当前操作的DOM元素
+            const dome = this.$el.children[i]
 
             const inertiaStrength = 300;
             let inertiaDistance = this.Y[i].Velocity * inertiaStrength;
 
             // 计算最终位置 = 当前位置 + 惯性滑动距离
             let finalPosition = this.Y[i].MoveY + inertiaDistance;
-            const scrollToTheBottom = -num * 44;
+            const scrollToTheBottom = this.num(i);
             finalPosition = finalPosition > 0 ? 0
                 : finalPosition < scrollToTheBottom
                     ? scrollToTheBottom : finalPosition;
