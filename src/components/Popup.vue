@@ -3,8 +3,9 @@
     @click="$emit('update:show', false)">
     <div class="popup-content"
         @click.stop>
-        <span class="popup-close"
-            @click="$emit('update:show', false)">×</span>
+        <span v-if="close"
+            @click="$emit('update:show', false)"
+            class="popup-close">×</span>
         <slot></slot>
     </div>
 </div>
@@ -16,6 +17,10 @@ export default {
         show: {
             type: Boolean,
             default: false
+        },
+        close: {
+            type: Boolean,
+            default: true
         }
     }
 }
@@ -42,7 +47,6 @@ export default {
             width: 100%;
             background-color: #fff;
             border-radius: 20px 20px 0 0;
-            padding: 0 16px;
             max-height: 80%;
             min-height: 50%;
 

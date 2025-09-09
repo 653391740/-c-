@@ -50,7 +50,7 @@
 export default {
     data() {
         return {
-            userinfo: JSON.parse(localStorage.getItem('userinfo')),
+            userinfo: {},
             orderStatusList: [
                 {
                     icon: '/src/assets/fk.png',
@@ -70,7 +70,11 @@ export default {
                 }
             ]
         }
-    }
+    },
+    mounted() {
+        if (localStorage.getItem('userinfo')) this.userinfo = JSON.parse(localStorage.getItem('userinfo'))
+        console.log(this.userinfo)
+    },
 }
 </script>
 

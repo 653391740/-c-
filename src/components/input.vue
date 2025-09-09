@@ -1,12 +1,13 @@
 <template>
 <div class="item"
-    :style="{ 'padding-bottom': hasslot ? '10px' : '25px' }">
+    @click="$emit('click')"
+    :style="{ 'padding-bottom': !msg || hasslot ? '10px' : '25px' }">
     <p>{{ label }}</p>
     <slot v-if="hasslot"></slot>
     <input type="text"
         v-else
         v-input
-        :placeholder="label"
+        :placeholder="placeholder || label"
         :value="value"
         @input="$emit('input', $event.target.value)">
     <transition name="fade">
@@ -21,6 +22,10 @@
 export default {
     props: {
         label: {
+            type: String,
+            default: ''
+        },
+        placeholder: {
             type: String,
             default: ''
         },
@@ -69,14 +74,15 @@ export default {
         width: 90%;
         border-bottom: 1px solid #e3e3e3;
         display: flex;
+        align-items: center;
         position: relative;
-        &>*{
+
+        &>* {
             flex: 1;
         }
 
         p {
             flex: 0 0 auto;
-            margin-top: 5px;
             width: 30%;
             font-size: 14px;
             color: #646566;
@@ -85,6 +91,7 @@ export default {
         input {
             font-size: 14px;
             height: 35px;
+            background-color: transparent;
 
             &.input {
                 &::placeholder {

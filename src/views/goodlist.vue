@@ -79,6 +79,8 @@ export default {
             if (goodData !== null) {
                 this.goodlist.push(...goodData);
                 this.params.page++
+            } else {
+                this.params = null
             }
             this.loading = false
         }

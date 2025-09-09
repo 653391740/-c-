@@ -31,7 +31,7 @@
         </li>
     </ul>
     <div class="newaddress">
-        <button>新增地址</button>
+        <button @click="$router.push('/addressadd')">新增地址</button>
     </div>
 </div>
 </template>
@@ -57,8 +57,8 @@ export default {
             console.log(e);
         },
         change(e, i) {
-            if (this.type === 1) {
-                this.active = i
+            this.active = i
+            if (this.type === '1') {
                 setTimeout(() => {
                     this.$router.replace({
                         path: '/orderconfirm',
@@ -67,7 +67,7 @@ export default {
                         }
                     })
                 }, 500)
-            }else if(this.type === 2){
+            } else if (this.type === '2') {
                 // this.$router.replace({
                 //     path: '/orderconfirm',
                 //     query: {

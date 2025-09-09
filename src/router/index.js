@@ -76,12 +76,17 @@ const routes = [
     {
         path: '/addresslist',
         name: 'Addresslist',
-        component: () => import('@/views/addresslist.vue')
+        component: () => import('@/views/address/addresslist.vue')
     },
     {
         path: '/orderlist',
         name: 'Orderlist',
         component: () => import('@/views/orderlist.vue')
+    },
+    {
+        path: '/addressadd',
+        name: 'Addressadd',
+        component: () => import('@/views/address/addressadd.vue')
     },
 ]
 

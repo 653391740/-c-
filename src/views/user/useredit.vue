@@ -54,17 +54,27 @@
     <div class="region"
         @click="showRegion = true">{{ userinfo.region }}</div>
     </Input>
+    <button class="submit"
+        @click="submit">提交</button>
     <Popup :show.sync="showCalendar">
         <Calendar @date-selected="selectDate"></Calendar>
     </Popup>
-    <Popup :show.sync="showRegion">
-        <Region></Region>
+    <Popup :show.sync="showRegion"
+        :close="false">
+        <div class="toolbar">
+            <div class="close"
+                @click="showRegion = false">取消</div>
+            <div class="confirm"
+                @click="confirm">确认</div>
+        </div>
+        <Region :region="userinfo.region"
+            @region-change="region = $event"></Region>
     </Popup>
 </div>
 </template>
 
 <script>
-import { getuserinfo } from '@/api/login'
+import { getuserinfo, infoedit } from '@/api/login'
 import Popup from '@/components/Popup.vue';
 import Title from '@/components/title.vue'
 import Calendar from './calendar.vue'
@@ -80,6 +90,7 @@ export default {
         return {
             img: [],
             userinfo: {},
+            region: '',
             showCalendar: false,
             showRegion: false
         }
@@ -88,6 +99,24 @@ export default {
         this.getuserinfo()
     },
     methods: {
+        confirm() {
+            this.showRegion = false
+            this.userinfo.region = this.region
+        },
+        async submit() {
+            const data = { ...this.userinfo, avatarurl: this.img[0].raw ? this.img[0].raw : this.img[0].url }
+            if (!Object.values(data).every(e => e)) return this.$msg('请填写完整信息')
+            const { code, list: { avatarurl } } = await infoedit(data);
+            if (code === 200) {
+                localStorage.setItem('userinfo', JSON.stringify({
+                    ...JSON.parse(localStorage.getItem('userinfo')),
+                    avatarurl,
+                    nickname: this.userinfo.nickname,
+                }))
+                this.$popupMsg.success('修改成功')
+                setTimeout(() => this.$router.back(), 500)
+            }
+        },
         selectDate(date) {
             const dates = new Date(date);
             const birthday = `${dates.getMonth() + 1}/${dates.getDate()}`;
@@ -112,7 +141,6 @@ export default {
                 this.img = [{
                     url: list[0].avatarurl
                 }]
-                console.log(this.userinfo);
             }
         },
         del(index) {
@@ -124,10 +152,43 @@ export default {
 
 <style scoped
     lang="scss">
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+
+        div {
+            padding: 0 16px;
+            line-height: 44px;
+            font-size: 14px;
+        }
+
+        .close {
+            color: #969799;
+        }
+
+        .confirm {
+            color: #576b95;
+        }
+    }
+
     .useredit {
         width: 100%;
         height: 100%;
         padding-top: 44px;
+
+        input:checked {
+            background-color: #1989fa;
+        }
+
+        .submit {
+            background-color: #ff6040;
+            color: #fff;
+            font-size: 14px;
+            height: 44px;
+            border-radius: 22px;
+            margin: 16px;
+            width: calc(100% - 32px);
+        }
 
         .radio-box {
             display: flex;

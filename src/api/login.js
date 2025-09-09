@@ -29,3 +29,10 @@ export const getuserinfo = () => {
         }
     })
 }
+export const infoedit = (data) => {
+    const formData = new FormData();
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+    return http.post('infoedit', formData)
+}

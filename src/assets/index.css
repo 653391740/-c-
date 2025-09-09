@@ -49,14 +49,23 @@ input[type="checkbox"] {
 
   &:checked {
     transition: all 0.3s;
-    /* background-color: #1989fa; */
     background-color: #ff6040;
+    position: relative;
     text-align: center;
     border: 0;
 
     &::after {
-      content: '✓';
-      color: #fff;
+      top: 25%;
+      left: 50%;
+      content: "";
+      position: absolute;
+      transform: translateX(-50%) rotate(-45deg);
+      border: 2px solid transparent;
+      border-left-color: #fff;
+      border-bottom-color: #fff;
+      padding: 1.5px 4px;
+      z-index: 99;
+      border-radius: 2px;
     }
   }
 }
