@@ -66,18 +66,17 @@ export default {
     },
     computed: {
         provlist() {
-            const provinceName = this.province || this.region.split(',')[0];
+            const provinceName = this.province || '北京市';
             return this.regionlist.find(e => e.province === provinceName)?.citys || [];
         },
         citylist() {
-            const cityName = this.citys || this.region.split(',')[1];
+            const cityName = this.citys || '北京市';
             return this.provlist.find(e => e.city === cityName)?.areas || [];
         },
     },
     methods: {
         handleClick(e, i, index) {
             this.Y[i].MoveY = -index * 44;
-
         },
         handleTouchStart(e, i) {
             this.Y[i].StartY = e.touches[0].clientY - this.Y[i].MoveY;
@@ -88,9 +87,10 @@ export default {
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
+            const num = (i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1;
             const dome = this.$el.children[i]
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
-            const scrollToTheBottom = -dome.scrollHeight + 128 + 44 
+            const scrollToTheBottom = -num * 44
             console.log(scrollToTheBottom);
 
             const now = new Date();
@@ -107,6 +107,7 @@ export default {
             this.lastMoveTime = now;
         },
         handleTouchEnd(e, i) {
+            const num = (i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1;
             const dome = this.$el.children[i] // 获取当前操作的DOM元素
 
             const inertiaStrength = 300;
@@ -114,21 +115,15 @@ export default {
 
             // 计算最终位置 = 当前位置 + 惯性滑动距离
             let finalPosition = this.Y[i].MoveY + inertiaDistance;
-
-            // 限制滑动范围，确保不会超出顶部和底部边界
-            const scrollToTheBottom = -dome.scrollHeight + 128 + 44;
+            const scrollToTheBottom = -num * 44;
             finalPosition = finalPosition > 0 ? 0
                 : finalPosition < scrollToTheBottom
                     ? scrollToTheBottom : finalPosition;
-
             const currentIndex = Math.round(Math.abs(finalPosition) / 44);
-
-            // 惯性滑动动画使用cubic-bezier曲线使动画更自然
             dome.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             dome.style.transform = `translateY(${-currentIndex * 44}px)`;
-
             this.Y[i].MoveY = -currentIndex * 44;
-            dome.addEventListener('transitionend', () => {
+            const transitionend = () => {
                 if (i == 0) {
                     this.province = this.regionlist[currentIndex].province
                     this.citys = this.provlist[0].city
@@ -145,7 +140,11 @@ export default {
                     this.areas = this.citylist[currentIndex].area
                 }
                 this.$emit('region-change', `${this.province},${this.citys},${this.areas}`)
-            })
+            }
+            dome.addEventListener('transitionend', transitionend)
+            if (-currentIndex * 44 === scrollToTheBottom) {
+                transitionend()
+            }
             this.Y[i].Velocity = 0;
         }
     },

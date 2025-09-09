@@ -14,7 +14,8 @@
             v-for="(monthData, index) in calendarData"
             :key="index">
             <div class="month-title">{{ monthData.year }}年{{ monthData.month }}月</div>
-            <div class="days">
+            <div class="days"
+                :data-month="monthData.month">
                 <div class="day"
                     v-for="(day, dayIndex) in monthData.days"
                     :key="dayIndex"
@@ -149,7 +150,6 @@ export default {
     .calendar {
         position: relative;
         text-align: center;
-        margin: 0 -16px;
 
         .foot {
             position: absolute;
@@ -203,6 +203,18 @@ export default {
                 .days {
                     display: flex;
                     flex-wrap: wrap;
+                    position: relative;
+
+                    &::after {
+                        content: attr(data-month);
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        opacity: .5;
+                        font-size: 130px;
+                        transform: translate(-50%, -50%);
+                        font-weight: bold;
+                    }
 
                     .day {
                         width: calc(100% / 7);
