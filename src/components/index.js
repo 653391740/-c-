@@ -30,6 +30,10 @@ const popupMsg = function (message, duration = 2000) {
 }
 
 // 添加链式调用方法
+// popupMsg.info = function (message, duration = 2000) {
+//   popupInstance.info(message, duration)
+//   return this
+// }
 popupMsg.info = function (message, duration = 2000) {
   popupInstance.info(message, duration)
   return this
@@ -50,12 +54,8 @@ popupMsg.warn = function (message, duration = 2000) {
 Vue.prototype.$popupMsg = popupMsg
 
 // 导出一个函数，以便在非Vue上下文中使用
-export default function (message, duration = 2000) {
-  instance.show(message, duration)
-}
-
-// 导出popupmsg组件
-export { PopupMsgComponent }
-
+// export default function (message, duration = 2000) {
+//   instance.show(message, duration)
+// }
 // 导出popupMsg函数，以便在非Vue上下文中使用
 export { popupMsg, msg }

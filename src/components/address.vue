@@ -1,5 +1,5 @@
 <template>
-<div class="address">
+<div class="addressbox">
     <Input label="姓名"
         placeholder="收货人姓名"
         v-model="form.username"></Input>
@@ -97,7 +97,7 @@ export default {
 
 <style scoped
     lang="scss">
-    .address {
+    .addressbox {
         height: 100%;
 
         button {
@@ -186,10 +186,9 @@ export default {
         }
 
         .city {
-            justify-content: space-between;
-            align-items: center;
-            display: flex;
-            height: 35px;
+            line-height: 35px;
+            overflow: hidden;
+            position: relative;
 
             p {
                 flex: 1;
@@ -197,7 +196,12 @@ export default {
             }
 
             span {
+                padding-left: 5px;
+                background-color: #fff;
                 color: #c8c9cf;
+                position: absolute;
+                right: 0;
+                top: 0;
             }
         }
     }

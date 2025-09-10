@@ -44,7 +44,9 @@ export default {
     },
     methods: {
         async handleAddCart(obj) {
+            const uid = JSON.parse(localStorage.getItem('userinfo'))
             if ([obj.color, obj.gMemory].every(e => e)) {
+                if (!uid) return this.$popupMsg.warn('请先登录')
                 try {
                     const { code, msg, list } = await cartadd({
                         num: obj.num,

@@ -105,7 +105,7 @@ const router = new VueRouter({
     routes
 })
 
-const blackList = ['/cart']
+const blackList = ['/cart', '/useredit', '/orderlist', '/addresslist']
 
 // 路由守卫
 router.beforeEach((to, from, next) => {

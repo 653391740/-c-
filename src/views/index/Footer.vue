@@ -29,13 +29,12 @@ export default {
     created() {
         const userinfoStr = localStorage.getItem('userinfo');
         this.token = userinfoStr ? JSON.parse(userinfoStr).token : null;
+        this.$router.afterEach((to, from) => {
+            this.activeIndex = this.navItems.findIndex(item => item.path === to.path);
+            if (this.activeIndex === -1) return
+            sessionStorage.setItem('activeIndex', JSON.stringify(this.activeIndex))
+        })
     },
-    methods: {
-        handleClick(index) {
-            this.activeIndex = index;
-            sessionStorage.setItem('activeIndex', JSON.stringify(index))
-        }
-    }
 }
 </script>
 <template>
@@ -44,7 +43,6 @@ export default {
         <ul>
             <li v-for="item, index in navItems"
                 :key="item.path"
-                @click="handleClick(index)"
                 :class="{ 'active': activeIndex === index }">
                 <router-link :to="item.path">
                     {{ item.dynamicText

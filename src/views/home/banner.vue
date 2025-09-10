@@ -6,7 +6,7 @@
         ref="carouselTrack"
         :style="{
             transform: `translateX(-${currentIndex * 100}%)`,
-            transition: isTransitioning ? 'transform 0.5s ease' : 'none'
+            transition: isTransitioning ? 'transform 0.3s ease' : 'none'
         }">
         <!-- 复制最后一张到开头，用于无缝滚动 -->
         <div class="carousel-item"
@@ -56,18 +56,12 @@ export default {
     data() {
         return {
             slides: [],
-            // 是否自动轮播
             autoPlay: true,
-            // 当前索引（考虑了前后复制的元素）
             currentIndex: 1,
-            // 自动轮播计时器
             timer: null,
-            // 是否正在过渡动画中
             isTransitioning: false,
-            // 触摸滑动相关变量
             startX: 0,
             endX: 0,
-            isDragging: false,
             touchTime: 0
         };
     },
@@ -83,14 +77,9 @@ export default {
         }
     },
     mounted() {
-        if (this.autoPlay) {
-            this.startAutoPlay();
-        }
+        if (this.autoPlay) this.startAutoPlay();
         this.getbanner()
-
         this.bindTouchEvents();
-
-        window.addEventListener('resize', this.handleResize);
     },
     beforeUnmount() {
         this.unbindTouchEvents();
@@ -195,8 +184,6 @@ export default {
         // 触摸移动处理
         handleTouchMove(e) {
             this.endX = e.touches[0].clientX;
-
-            // 计算手指移动的距离
             const diffX = this.endX - this.startX;
 
             // 计算当前轮播图应该偏移的距离
@@ -221,9 +208,9 @@ export default {
                     this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
                 }
             } else {
-                if (diffX > 100) {
+                if (diffX > window.innerWidth / 2) {
                     this.prevSlide();
-                } else if (diffX < -100) {
+                } else if (diffX < -window.innerWidth / 2) {
                     this.nextSlide();
                 } else {
                     this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
@@ -236,11 +223,6 @@ export default {
             if (this.autoPlay) {
                 this.startAutoPlay();
             }
-        },
-
-        // 处理窗口大小变化
-        handleResize() {
-            // 可以在这里添加响应式调整逻辑
         }
     }
 };

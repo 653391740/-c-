@@ -96,7 +96,7 @@ export default {
 <style scoped
     lang="scss">
     .popups {
-        padding-top: 16px;
+        padding: 16px 16px 0;
 
         .button {
             display: flex;

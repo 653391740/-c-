@@ -101,6 +101,7 @@ export default {
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
+            e.preventDefault()
             const dome = this.$refs.calendar.children[i]
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
             const scrollToTheBottom = this.num(i)
@@ -121,8 +122,13 @@ export default {
             this.lastMoveTime = now;
         },
         num(i) {
-            return -((i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1) * 44
+            const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
+            const offset = this.isMobile() ? 2 : 1; // 手机使用偏移2，电脑使用偏移1
+            return -(listLength - offset) * 44;
         },
+        isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+      },
         reset(i) {
             this.$refs.calendar.children[i].style.transform = `translateY(0px)`
             this.Y[i].MoveY = 0;
