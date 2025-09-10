@@ -44,25 +44,18 @@ export default {
     },
     methods: {
         async handleAddCart(obj) {
-            const uid = JSON.parse(localStorage.getItem('userinfo'))
+            const userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if ([obj.color, obj.gMemory].every(e => e)) {
-                if (!uid) return this.$popupMsg.warn('请先登录')
-                try {
-                    const { code, msg, list } = await cartadd({
-                        num: obj.num,
-                        goodsid: this.$route.query.id
-                    })
-                    if (code === 200) {
-                        const { cartCount } = list
-                        this.$msg(msg)
-                        this.cartCount = cartCount
-                        this.showPopup = false
-                    } else if (code === 500) {
-                        this.$msg('请先登录')
-                    }
-                } catch (err) {
-                    this.$msg(err.message)
-                }
+                if (!userinfo) return this.$popupMsg.warn('请先登录')
+                const { msg, list } = await cartadd({
+                    uid: userinfo.uid,
+                    num: obj.num,
+                    goodsid: this.$route.query.id
+                })
+                const { cartCount } = list
+                this.$msg(msg)
+                this.cartCount = cartCount
+                this.showPopup = false
             } else {
                 this.$msg('请先选择商品规格')
             }

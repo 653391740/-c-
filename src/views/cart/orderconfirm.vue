@@ -48,12 +48,13 @@ export default {
     },
     methods: {
         async submit() {
-            const { countmoney, countnumber } = this.orderData
+            const { countmoney, countnumber } = this.orderData // 金额 数量
             const data = {
                 uid: JSON.parse(localStorage.getItem('userinfo')).uid,
-                addressid: this.address.id,
+                addressid: this.address.id, // 地址id
                 countmoney,
                 countnumber,
+                // 商品id
                 idstr: this.orderData.orderData.map(item => item.id).join(','),
             }
             const { list: { outTradeNo } } = await orderadd(data)

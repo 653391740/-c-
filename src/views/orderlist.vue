@@ -1,14 +1,15 @@
 <template>
-<div class="orderlist">
+<div class="orderlist"
+    @scroll="loadmore">
     <Title title="订单列表"
         back></Title>
     <div class="orderlist_title">
-        <span @click="change(0)">待付款</span>
-        <span @click="change(1)">待发货</span>
-        <span @click="change(2)">待收货</span>
-        <span @click="change(3)">全部订单</span>
+        <span @click="active = 0">待付款</span>
+        <span @click="active = 1">待发货</span>
+        <span @click="active = 2">待收货</span>
+        <span @click="active = 3">全部订单</span>
         <div class="line"
-            :style="{ left: active * 94 + 27 + 'px' }"></div>
+            :style="{ left: active * 25 + ((25 - (40 / 375 * 100)) / 2) + '%' }"></div>
     </div>
     <div class="orderlist_item"
         v-for="value in list">
@@ -39,6 +40,15 @@
             <button>查看物流</button>
         </div>
     </div>
+    <div class="loading"
+        ref="loading">
+        <div v-if="show">
+            加载中...
+        </div>
+        <div v-else>
+            没有更多了
+        </div>
+    </div>
 </div>
 </template>
 
@@ -52,22 +62,49 @@ export default {
     data() {
         return {
             active: 0,
-            list: []
+            list: [],
+            loading: false,
+            show: true,
+            data: {
+                page: 1,
+                size: 5
+            }
         }
     },
     mounted() {
-        this.change(0)
+        this.change()
     },
-    methods: {
-        async change(index) {
-            this.active = index
-            const { list } = await orderlist({
-                status: index,
+    watch: {
+        active() {
+            this.data = {
                 page: 1,
                 size: 5
+            }
+            this.list = []
+            this.show = true
+            this.change()
+        }
+    },
+    methods: {
+        loadmore(e) {
+            if (!this.loading && e && e.target) {
+                const isloading = e.target.scrollTop + e.target.clientHeight
+                    >= this.$refs.loading.offsetTop;
+                if (isloading) {
+                    this.change()
+                    this.data.page++
+                }
+            }
+        },
+        async change() {
+            this.loading = true
+            const { list } = await orderlist({
+                status: this.active,
+                ...this.data
             })
-            if (list === null) return this.list = []
-            this.list = list.data
+            this.loading = false
+            if (list === null) return this.show = false
+            this.list.push(...list.data)
         }
     }
 }
@@ -75,6 +112,13 @@ export default {
 
 <style scoped
     lang="scss">
+    .loading {
+        text-align: center;
+        padding: 15px 0;
+        font-size: 14px;
+        color: #969799;
+    }
+
     .orderlist {
         padding-top: 44px;
         height: 100%;

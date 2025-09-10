@@ -3,12 +3,7 @@
     ref="carouselContainer">
     <!-- 轮播图轨道 -->
     <div class="carousel-track"
-        ref="carouselTrack"
-        :style="{
-            transform: `translateX(-${currentIndex * 100}%)`,
-            transition: isTransitioning ? 'transform 0.3s ease' : 'none'
-        }">
-        <!-- 复制最后一张到开头，用于无缝滚动 -->
+        ref="carouselTrack">
         <div class="carousel-item"
             v-if="slides.length">
             <img :src="'http://43.138.15.137:4000' + slides[slides.length - 1].img"
@@ -55,18 +50,16 @@ export default {
     name: 'SeamlessCarousel',
     data() {
         return {
-            slides: [],
-            autoPlay: true,
-            currentIndex: 1,
-            timer: null,
-            isTransitioning: false,
-            startX: 0,
-            endX: 0,
-            touchTime: 0
+            slides: [], // 轮播图数据
+            currentIndex: 1, // 索引
+            touchTime: 0, // 触摸时间
+            timer: null, // 自动播放定时器
+            startX: 0, // 触摸开始位置
+            endX: 0, // 触摸结束位置
         };
     },
     computed: {
-        // 实际显示的索引（排除前后复制的元素）
+        // 排除前后复制的元素,实际显示的索引
         realIndex() {
             if (this.currentIndex === 0) {
                 return this.slides.length - 1;
@@ -77,26 +70,40 @@ export default {
         }
     },
     mounted() {
-        if (this.autoPlay) this.startAutoPlay();
         this.getbanner()
         this.bindTouchEvents();
     },
     beforeUnmount() {
+        this.clearTimer();
         this.unbindTouchEvents();
+    },
+    watch: {
+        currentIndex() {
+            this.updateCarouselPosition();
+        }
     },
     methods: {
         async getbanner() {
             const { code, list } = await getbanner()
             if (code === 200) {
                 this.slides = list
+                this.startAutoPlay();
             }
         },
-        // 开始自动轮播
+
+        updateCarouselPosition() {
+            if (this.$refs.carouselTrack) {
+                this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+            }
+        },
+
         startAutoPlay() {
             this.clearTimer();
-            this.timer = setInterval(() => {
-                this.nextSlide();
-            }, 3000);
+            if (this.slides.length > 0) {
+                this.timer = setInterval(() => {
+                    this.nextSlide();
+                }, 3000);
+            }
         },
 
         // 清除计时器
@@ -109,52 +116,31 @@ export default {
 
         // 下一张
         nextSlide() {
-            if (this.isTransitioning) return;
-
-            this.isTransitioning = true;
             this.currentIndex++;
-
-            // 当到达最后一个复制的元素时，无缝切换到第一个
             setTimeout(() => {
                 if (this.currentIndex > this.slides.length) {
-                    this.isTransitioning = false;
+                    // 无缝滚动处理：立即跳到第一张，无过渡效果
+                    this.$refs.carouselTrack.style.transition = 'none';
                     this.currentIndex = 1;
-                } else {
-                    this.isTransitioning = false;
                 }
-            }, 500);
-
-            // 重置自动轮播计时器
-            if (this.autoPlay) {
-                this.startAutoPlay();
-            }
+            }, 300);
         },
 
         // 上一张
         prevSlide() {
-            if (this.isTransitioning) return;
-
-            this.isTransitioning = true;
             this.currentIndex--;
-
-            // 当到达第一个复制的元素时，无缝切换到最后一个
             setTimeout(() => {
                 if (this.currentIndex < 1) {
-                    this.isTransitioning = false;
+                    this.$refs.carouselTrack.style.transition = 'none';
                     this.currentIndex = this.slides.length;
-                } else {
-                    this.isTransitioning = false;
                 }
-            }, 500);
-
-            // 重置自动轮播计时器
-            if (this.autoPlay) {
-                this.startAutoPlay();
-            }
+            }, 300);
         },
 
         // 绑定触摸事件
         bindTouchEvents() {
+            if (!this.$refs.carouselTrack) return;
+
             const track = this.$refs.carouselTrack;
             track.addEventListener('touchstart', this.handleTouchStart);
             track.addEventListener('touchmove', this.handleTouchMove);
@@ -163,6 +149,7 @@ export default {
 
         // 解绑触摸事件
         unbindTouchEvents() {
+            if (!this.$refs.carouselTrack) return;
             const track = this.$refs.carouselTrack;
             track.removeEventListener('touchstart', this.handleTouchStart);
             track.removeEventListener('touchmove', this.handleTouchMove);
@@ -171,58 +158,44 @@ export default {
 
         // 触摸开始处理
         handleTouchStart(e) {
+            this.$refs.carouselTrack.style.transition = 'none';
             this.startX = e.touches[0].clientX;
-            this.endX = e.touches[0].clientX
-            this.isTransitioning = false;
-            this.touchTime = new Date()
-            // 暂停自动播放
-            if (this.autoPlay) {
-                this.clearTimer();
-            }
+            this.endX = e.touches[0].clientX;
+            this.touchTime = new Date();
+            this.clearTimer();
         },
 
-        // 触摸移动处理
         handleTouchMove(e) {
             this.endX = e.touches[0].clientX;
-            const diffX = this.endX - this.startX;
-
-            // 计算当前轮播图应该偏移的距离
-            const offset = -(this.currentIndex * 100) + (diffX / this.$refs.carouselContainer.offsetWidth * 100);
-
-            // 实时更新轮播图位置，实现跟随手指移动效果
-            this.$refs.carouselTrack.style.transform = `translateX(${offset}%)`;
-            this.$refs.carouselTrack.style.transition = 'none';
+            const diffX = e.touches[0].clientX - this.startX;
+            const containerWidth = this.$refs.carouselContainer.offsetWidth;
+            const x = this.currentIndex * 100 - diffX / containerWidth * 100;
+            this.$refs.carouselTrack.style.transform = `translateX(-${x}%)`;
         },
 
         // 触摸结束处理
         handleTouchEnd() {
+            this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
             const diffX = this.endX - this.startX;
-            this.$refs.carouselTrack.style.transition = 'transform 0.5s ease';
-            const time = new Date() - this.touchTime
-            if (time < 300) {
-                if (diffX > 10) {
+            const time = new Date() - this.touchTime;
+
+            let shouldChange = false;
+            if (time < 300 && Math.abs(diffX) > 10) {
+                shouldChange = true;
+            } else if (Math.abs(diffX) > window.innerWidth / 2) {
+                shouldChange = true;
+            }
+
+            if (shouldChange) {
+                if (diffX > 0) {
                     this.prevSlide();
-                } else if (diffX < -10) {
-                    this.nextSlide();
                 } else {
-                    this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
+                    this.nextSlide();
                 }
             } else {
-                if (diffX > window.innerWidth / 2) {
-                    this.prevSlide();
-                } else if (diffX < -window.innerWidth / 2) {
-                    this.nextSlide();
-                } else {
-                    this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
-                }
+                this.updateCarouselPosition();
             }
-            this.startX = 0
-            this.endX = 0
-            this.touchTime = 0
-            // 恢复自动播放
-            if (this.autoPlay) {
-                this.startAutoPlay();
-            }
+            this.startAutoPlay();
         }
     }
 };

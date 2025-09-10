@@ -89,8 +89,6 @@ export default {
     methods: {
         loadmore() {
             if (this.params && !this.loading) {
-                console.log(1);
-                
                 const isloading = window.scrollY + window.innerHeight
                     >= this.$refs.loading.offsetTop
                 if (isloading) this.$emit('loading')
@@ -180,7 +178,6 @@ export default {
         .loading {
             text-align: center;
             padding: 15px 0;
-            background-color: #fff;
             font-size: 14px;
             color: #969799;
         }
