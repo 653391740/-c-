@@ -44,6 +44,19 @@ export const orderlist = (data) => {
 export const orderadd = (data) => {
     return http.post(`orderadd`, data)
 }
+// 支付宝支付
 export const alipay = (data) => {
     return http.post(`alipay`, data)
+}
+// 地址添加
+export const addressadd = (data) => {
+    return http.post(`addressadd`, data)
+}
+// 地址编辑
+export const addressedit = (data) => {
+    return http.post(`addressedit`, data)
+}
+// 地址删除
+export const addressremove = (data) => {
+    return http.post(`addressremove`, data)
 }

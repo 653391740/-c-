@@ -89,6 +89,11 @@ const routes = [
         component: () => import('@/views/address/addressadd.vue')
     },
     {
+        path: '/addressedit',
+        name: 'Addressedit',
+        component: () => import('@/views/address/addressedit.vue')
+    },
+    {
         path: '/pay',
         name: 'Pay',
         component: () => import('@/views/pay.vue')

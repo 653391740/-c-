@@ -47,9 +47,6 @@ export default {
             isShow: false,
         }
     },
-    methods: {
-
-    },
     directives: {
         input: {
             inserted(el, binding, vnode) {
@@ -86,6 +83,7 @@ export default {
             width: 30%;
             font-size: 14px;
             color: #646566;
+            white-space: nowrap;
         }
 
         input {

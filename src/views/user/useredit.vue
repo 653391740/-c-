@@ -61,14 +61,9 @@
     </Popup>
     <Popup :show.sync="showRegion"
         :close="false">
-        <div class="toolbar">
-            <div class="close"
-                @click="showRegion = false">取消</div>
-            <div class="confirm"
-                @click="confirm">确认</div>
-        </div>
         <Region :region="userinfo.region"
-            @region-change="region = $event"></Region>
+            :show.sync="showRegion"
+            @region-change="userinfo.region = $event"></Region>
     </Popup>
 </div>
 </template>
@@ -78,7 +73,7 @@ import { getuserinfo, infoedit } from '@/api/login'
 import Popup from '@/components/Popup.vue';
 import Title from '@/components/title.vue'
 import Calendar from './calendar.vue'
-import Region from './region.vue'
+import Region from '../../components/region.vue'
 export default {
     components: {
         Title,
@@ -90,7 +85,6 @@ export default {
         return {
             img: [],
             userinfo: {},
-            region: '',
             showCalendar: false,
             showRegion: false
         }
@@ -99,10 +93,6 @@ export default {
         this.getuserinfo()
     },
     methods: {
-        confirm() {
-            this.showRegion = false
-            this.userinfo.region = this.region
-        },
         async submit() {
             const data = { ...this.userinfo, avatarurl: this.img[0].raw ? this.img[0].raw : this.img[0].url }
             if (!Object.values(data).every(e => e)) return this.$msg('请填写完整信息')
@@ -152,25 +142,6 @@ export default {
 
 <style scoped
     lang="scss">
-    .toolbar {
-        display: flex;
-        justify-content: space-between;
-
-        div {
-            padding: 0 16px;
-            line-height: 44px;
-            font-size: 14px;
-        }
-
-        .close {
-            color: #969799;
-        }
-
-        .confirm {
-            color: #576b95;
-        }
-    }
-
     .useredit {
         width: 100%;
         height: 100%;

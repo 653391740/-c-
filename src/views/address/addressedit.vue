@@ -1,17 +1,17 @@
 <template>
-<div class="addressadd">
-    <Title title="添加收货地址"
+<div class="addressedit">
+    <Title title="编辑收货地址"
         back></Title>
     <Address @save="save"
+        @delete="del"
         :form="form"></Address>
 </div>
 </template>
 
 <script>
-import { addressadd } from '@/api/cart'
+import { addressedit, addressremove } from '@/api/cart'
 import Address from '@/components/address.vue'
 import Title from '@/components/title.vue'
-
 
 export default {
     components: {
@@ -20,21 +20,21 @@ export default {
     },
     data() {
         return {
-            form: {
-                uid: JSON.parse(localStorage.getItem('userinfo')).uid,
-                username: '',
-                userphone: '',
-                location: '',
-                useraddress: '',
-                status: 0
-            }
+            form: this.$route.query
         }
     },
     methods: {
         async save() {
-            const res = await addressadd(this.form)
+            const res = await addressedit(this.form)
             if (res.code === 200) {
-                this.$popupMsg.success('添加成功')
+                this.$popupMsg.success('修改成功')
+                this.$router.back()
+            }
+        },
+        async del() {
+            const { msg, code } = await addressremove({ id: this.form.id })
+            if (code === 200) {
+                this.$popupMsg.success(msg)
                 this.$router.back()
             }
         }
@@ -44,8 +44,7 @@ export default {
 
 <style scoped
     lang="scss">
-
-    .addressadd {
+    .addressedit {
         height: 100%;
         padding-top: 44px;
     }

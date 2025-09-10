@@ -34,6 +34,7 @@
         @submit="submit"
         :total="total"></dingdan>
     <Dialog :show="dialogShow"
+        msg="确定要删除吗?"
         @close="dialogShow = false"
         @confirm="del">
     </Dialog>
@@ -42,7 +43,7 @@
 
 <script>
 import { cartedit, cartdel } from '@/api/cart'
-import Dialog from './dialog.vue'
+import Dialog from '@/components/dialog.vue'
 import dingdan from '@/components/dingdan.vue'
 
 export default {

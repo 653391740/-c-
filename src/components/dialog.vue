@@ -4,8 +4,8 @@
         v-if="show">
         <transition name="dia">
             <div class="box">
-                <div class="title">温馨提示</div>
-                <p>是否要删除？</p>
+                <div class="title">{{ title }}</div>
+                <p v-if="msg">{{ msg }}</p>
                 <div class="btn">
                     <span @click="$emit('close')">取消</span>
                     <span @click="$emit('confirm')"
@@ -22,6 +22,14 @@ export default {
         show: {
             type: Boolean,
             default: false
+        },
+        title: {
+            type: String,
+            default: '温馨提示'
+        },
+        msg: {
+            type: String,
+            default: ''
         }
     }
 }
@@ -65,7 +73,6 @@ export default {
             transform: translateX(-50%);
             background-color: #fff;
             width: 320px;
-            height: 151px;
             border-radius: 16px;
             display: flex;
             flex-direction: column;
@@ -78,12 +85,13 @@ export default {
             }
 
             p {
-                margin-top: -10px;
+                margin-top: 10px;
                 font-size: 14px;
                 color: #646566;
             }
 
             .btn {
+                margin-top: 25px;
                 bottom: 0;
                 left: 0;
                 display: flex;

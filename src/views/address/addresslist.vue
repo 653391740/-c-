@@ -22,10 +22,10 @@
                 xmlns="http://www.w3.org/2000/svg"
                 p-id="4308"
                 width="200"
-                height="200">
+                height="200"
+                @click.stop="edit(e)">
                 <path d="M153.6 902.656a32.256 32.256 0 0 1 0-64h716.8a32.256 32.256 0 0 1 0 64zM743.936 151.04l72.192 72.192a51.2 51.2 0 0 1 0 72.192L358.4 751.616a51.2 51.2 0 0 1-36.352 14.848H226.816a25.6 25.6 0 0 1-25.6-25.6v-97.792a51.2 51.2 0 0 1 14.848-36.352l455.68-455.68a51.2 51.2 0 0 1 72.192 0z m-478.72 497.152v54.272h54.272l442.88-442.88L708.096 204.8z"
                     fill="#969799"
-                    @click.stop="edit(e)"
                     p-id="4309"></path>
             </svg>
         </li>
@@ -46,7 +46,6 @@ export default {
         return {
             address: [],
             active: 0,
-            type: this.$route.query.type
         }
     },
     mounted() {
@@ -54,11 +53,14 @@ export default {
     },
     methods: {
         edit(e) {
-            console.log(e);
+            this.$router.push({
+                path: '/addressedit',
+                query: e
+            })
         },
         change(e, i) {
             this.active = i
-            if (this.type === '1') {
+            if (this.$route.query.type === '1') {
                 setTimeout(() => {
                     this.$router.replace({
                         path: '/orderconfirm',
@@ -67,13 +69,6 @@ export default {
                         }
                     })
                 }, 500)
-            } else if (this.type === '2') {
-                // this.$router.replace({
-                //     path: '/orderconfirm',
-                //     query: {
-                //         ...e
-                //     }
-                // })
             }
         },
         async addresslist() {

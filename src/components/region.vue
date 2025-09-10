@@ -1,29 +1,34 @@
 <template>
-<div class="calendar">
-    <ul @touchstart="handleTouchStart($event, 0)"
-        @wheel="handleWheel($event, 0)"
-        @touchmove="handleTouchMove($event, 0)"
-        @touchend="handleTouchEnd($event, 0)">
-        <li v-for="(e, i) in regionlist"
-            @click="handleClick(e.province, 0, i)"
-            :key="e.province">{{ e.province }}</li>
-    </ul>
-    <ul @touchstart="handleTouchStart($event, 1)"
-        @touchmove="handleTouchMove($event, 1)"
-        @touchend="handleTouchEnd($event, 1)">
-        <li v-for="(e, i) in provlist"
-            @click="handleClick(e.city, 1, i)"
-            :key="e.city">{{ e.city }}</li>
-    </ul>
-    <ul @touchstart="handleTouchStart($event, 2)"
-        @touchmove="handleTouchMove($event, 2)"
-        @touchend="handleTouchEnd($event, 2)">
-        <li v-for="(e, i) in citylist"
-            @click="handleClick(e.area, 2, i)"
-            :key="e.area">{{ e.area }}</li>
-    </ul>
-    <div class="selected"></div>
-    <div class="pop"></div>
+<div class="box">
+    <div class="toolbar">
+        <div class="close"
+            @click="$emit('update:show', false)">取消</div>
+        <div class="confirm"
+            @click="confirm">确认</div>
+    </div>
+    <div class="calendar"
+        ref="calendar">
+        <ul @touchstart="handleTouchStart($event, 0)"
+            @touchmove="handleTouchMove($event, 0)"
+            @touchend="handleTouchEnd($event, 0)">
+            <li v-for="(e, i) in regionlist"
+                :key="e.province">{{ e.province }}</li>
+        </ul>
+        <ul @touchstart="handleTouchStart($event, 1)"
+            @touchmove="handleTouchMove($event, 1)"
+            @touchend="handleTouchEnd($event, 1)">
+            <li v-for="(e, i) in provlist"
+                :key="e.city">{{ e.city }}</li>
+        </ul>
+        <ul @touchstart="handleTouchStart($event, 2)"
+            @touchmove="handleTouchMove($event, 2)"
+            @touchend="handleTouchEnd($event, 2)">
+            <li v-for="(e, i) in citylist"
+                :key="e.area">{{ e.area }}</li>
+        </ul>
+        <div class="selected"></div>
+        <div class="pop"></div>
+    </div>
 </div>
 </template>
 <script>
@@ -32,9 +37,9 @@ export default {
     data() {
         return {
             regionlist: json, // 地区数据列表
-            province: '', // 当前选中的省份
-            citys: '', // 当前选中的城市
-            areas: '', // 当前选中的区域
+            province: '北京市', // 当前选中的省份
+            citys: '北京市', // 当前选中的城市
+            areas: '东城区', // 当前选中的区域
             Y: [
                 {
                     StartY: 0, // 触摸开始时的Y坐标
@@ -63,6 +68,10 @@ export default {
         region: {
             type: String,
             default: ''
+        },
+        show: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
@@ -76,13 +85,13 @@ export default {
         },
     },
     methods: {
-        handleWheel(e, i) {
-            e.preventDefault()
-            console.log(e.deltaY);
+        confirm() {
+            this.$emit('update:show', false)
+            this.$emit('region-change', `${this.province},${this.citys},${this.areas}`)
         },
-        handleClick(e, i, index) {
-            this.Y[i].MoveY = -index * 44;
-        },
+        // handleClick(e, i, index) {
+        //     this.Y[i].MoveY = -index * 44;
+        // },
         handleTouchStart(e, i) {
             this.Y[i].StartY = e.touches[0].clientY - this.Y[i].MoveY;
             this.lastMoveTime = new Date();
@@ -92,7 +101,7 @@ export default {
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
-            const dome = this.$el.children[i]
+            const dome = this.$refs.calendar.children[i]
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
             const scrollToTheBottom = this.num(i)
             const now = new Date();
@@ -114,9 +123,12 @@ export default {
         num(i) {
             return -((i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length) - 1) * 44
         },
+        reset(i) {
+            this.$refs.calendar.children[i].style.transform = `translateY(0px)`
+            this.Y[i].MoveY = 0;
+        },
         handleTouchEnd(e, i) {
-            const dome = this.$el.children[i]
-
+            const dome = this.$refs.calendar.children[i]
             const inertiaStrength = 300;
             let inertiaDistance = this.Y[i].Velocity * inertiaStrength;
 
@@ -134,19 +146,16 @@ export default {
                 if (i == 0) {
                     this.province = this.regionlist[currentIndex].province
                     this.citys = this.provlist[0].city
-                    this.$nextTick(() => this.areas = this.citylist[0].area)
-                    this.$el.children[1].style.transform = `translateY(0px)`
-                    this.$el.children[2].style.transform = `translateY(0px)`
-                    this.Y[1].MoveY = 0;
-                    this.Y[2].MoveY = 0;
+                    this.areas = this.citylist[0].area
+                    this.reset(1)
+                    this.reset(2)
                 } else if (i == 1) {
                     this.citys = this.provlist[currentIndex].city
                     this.areas = this.citylist[0].area
-                    this.$el.children[2].style.transform = `translateY(0px)`
+                    this.reset(2)
                 } else if (i == 2) {
                     this.areas = this.citylist[currentIndex].area
                 }
-                this.$emit('region-change', `${this.province},${this.citys},${this.areas}`)
             }
             dome.addEventListener('transitionend', transitionend)
             if (-currentIndex * 44 === scrollToTheBottom) {
@@ -160,6 +169,29 @@ export default {
 
 <style scoped
     lang="scss">
+    .box {
+        position: relative;
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+
+            div {
+                padding: 0 16px;
+                line-height: 44px;
+                font-size: 14px;
+            }
+
+            .close {
+                color: #969799;
+            }
+
+            .confirm {
+                color: #576b95;
+            }
+        }
+    }
+
     .calendar {
         display: flex;
         height: 300px;
@@ -174,6 +206,7 @@ export default {
             height: 100%;
             background-image: linear-gradient(#ffffff, transparent calc(50% - 22px), transparent calc(50% + 22px), #fff);
             z-index: 1;
+            /* 设置元素不响应鼠标、触摸等指针事件，防止该元素干扰下层元素的交互 */
             pointer-events: none;
         }
 
