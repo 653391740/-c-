@@ -73,7 +73,6 @@ export default {
     },
     mounted() {
         if (localStorage.getItem('userinfo')) this.userinfo = JSON.parse(localStorage.getItem('userinfo'))
-        console.log(this.userinfo)
     },
 }
 </script>

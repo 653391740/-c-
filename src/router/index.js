@@ -14,11 +14,13 @@ const routes = [
             {
                 path: '/home',
                 name: 'Home',
+                meta: { keepAlive: true },
                 component: () => import('@/views/home/index.vue'),
             },
             {
                 path: '/cate',
                 name: 'Cate',
+                meta: { keepAlive: true },
                 component: () => import('@/views/cate/index.vue'),
             },
             {
@@ -66,6 +68,7 @@ const routes = [
     {
         path: '/useredit',
         name: 'Useredit',
+        meta: { keepAlive: true },
         component: () => import('@/views/user/useredit.vue'),
     },
     {
@@ -81,6 +84,7 @@ const routes = [
     {
         path: '/orderlist',
         name: 'Orderlist',
+        meta: { keepAlive: true },
         component: () => import('@/views/orderlist.vue')
     },
     {

@@ -4,7 +4,7 @@
     <div class="empty"
         v-if="!list.length">
         <img src="/src/assets/default.png">
-        <p>暂无订单!</p>
+        <p>暂无商品!</p>
     </div>
     <Cart v-else
         :list="list"></Cart>

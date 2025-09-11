@@ -1,6 +1,7 @@
 <template>
 <div class="good">
     <Title title="商品列表"
+        :go="this.$route.query.id ? 2 : 1"
         back></Title>
     <div class="head">
         <div class="search">

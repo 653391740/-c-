@@ -91,17 +91,20 @@ export default {
     },
     mounted() {
         this.getuserinfo()
+        this.$router.afterEach(() => {
+            this.userinfo = JSON.parse(localStorage.getItem('userinfo'))
+        })
     },
     methods: {
         async submit() {
-            const data = { ...this.userinfo, avatarurl: this.img[0].raw ? this.img[0].raw : this.img[0].url }
+            const data = { ...this.userinfo, avatarurl: this.img[0] ? (this.img[0].raw ? this.img[0].raw : this.img[0].url) : '' }
             if (!Object.values(data).every(e => e)) return this.$msg('请填写完整信息')
             const { code, list: { avatarurl } } = await infoedit(data);
             if (code === 200) {
                 localStorage.setItem('userinfo', JSON.stringify({
                     ...JSON.parse(localStorage.getItem('userinfo')),
+                    ...data,
                     avatarurl,
-                    nickname: this.userinfo.nickname,
                 }))
                 this.$popupMsg.success('修改成功')
                 setTimeout(() => this.$router.back(), 500)
@@ -127,10 +130,15 @@ export default {
         async getuserinfo() {
             let { code, list } = await getuserinfo()
             if (code === 200) {
-                this.userinfo = list[0]
+                const data = list[0]
+                this.userinfo = data
                 this.img = [{
-                    url: list[0].avatarurl
+                    url: data.avatarurl
                 }]
+                localStorage.setItem('userinfo', JSON.stringify({
+                    ...JSON.parse(localStorage.getItem('userinfo')),
+                    ...data
+                }))
             }
         },
         del(index) {

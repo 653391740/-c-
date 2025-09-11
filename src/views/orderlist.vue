@@ -12,7 +12,7 @@
             :style="{ left: active * 25 + ((25 - (40 / 375 * 100)) / 2) + '%' }"></div>
     </div>
     <div class="orderlist_item"
-        v-for="value in list">
+        v-for="value in activeData.list">
         <div class="cell">
             <p>{{ value.ordernumber }}</p>
             <div class="value">{{ value.status === 0 ? '待支付' : '' }}</div>
@@ -42,7 +42,7 @@
     </div>
     <div class="loading"
         ref="loading">
-        <div v-if="show">
+        <div v-if="listdata[active].show">
             加载中...
         </div>
         <div v-else>
@@ -56,33 +56,53 @@
 import { orderlist } from '@/api/cart'
 import Title from '@/components/title.vue'
 export default {
+    name: 'Orderlist',
     components: {
         Title
     },
     data() {
         return {
             active: 0,
-            list: [],
+            listdata: [
+                {
+                    page: 1,
+                    size: 5,
+                    show: true,
+                    list: []
+                },
+                {
+                    page: 1,
+                    size: 5,
+                    show: true,
+                    list: []
+                },
+                {
+                    page: 1,
+                    size: 5,
+                    show: true,
+                    list: []
+                },
+                {
+                    page: 1,
+                    size: 5,
+                    show: true,
+                    list: []
+                },
+            ],
             loading: false,
-            show: true,
-            data: {
-                page: 1,
-                size: 5
-            }
         }
     },
     mounted() {
         this.change()
     },
+    computed: {
+        activeData() {
+            return this.listdata[this.active]
+        }
+    },
     watch: {
         active() {
-            this.data = {
-                page: 1,
-                size: 5
-            }
-            this.list = []
-            this.show = true
-            this.change()
+            if (this.activeData.page === 1) this.change()
         }
     },
     methods: {
@@ -90,21 +110,21 @@ export default {
             if (!this.loading && e && e.target) {
                 const isloading = e.target.scrollTop + e.target.clientHeight
                     >= this.$refs.loading.offsetTop;
-                if (isloading) {
-                    this.change()
-                    this.data.page++
-                }
+                if (isloading) this.change()
             }
         },
         async change() {
+            if (!this.activeData.show) return
             this.loading = true
             const { list } = await orderlist({
                 status: this.active,
-                ...this.data
+                page: this.activeData.page,
+                size: this.activeData.size
             })
+            this.activeData.page++
             this.loading = false
-            if (list === null) return this.show = false
-            this.list.push(...list.data)
+            if (list === null) return this.activeData.show = false
+            this.activeData.list.push(...list.data)
         }
     }
 }

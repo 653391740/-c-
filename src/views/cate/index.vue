@@ -16,6 +16,7 @@ import Aside from '@/views/cate/aside.vue'
 import SelectContent from '@/views/cate/select__content.vue'
 
 export default {
+    name: 'Cate',
     components: {
         Title,
         Aside,
