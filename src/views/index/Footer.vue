@@ -19,8 +19,7 @@ export default {
                 },
                 {
                     path: '/user', text: '用户',
-                    icon:
-                        'iconfont icon-denglu-copy',
+                    icon: 'iconfont icon-denglu-copy',
                     dynamicText: true
                 }
             ]
@@ -31,7 +30,7 @@ export default {
         this.token = userinfoStr ? JSON.parse(userinfoStr).token : null;
         this.$router.afterEach((to, from) => {
             this.activeIndex = this.navItems.findIndex(item => item.path === to.path);
-            if (this.activeIndex === -1) return
+            if (this.activeIndex === -1) return // 未匹配到路由不进行存储
             sessionStorage.setItem('activeIndex', JSON.stringify(this.activeIndex))
         })
     },

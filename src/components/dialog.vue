@@ -1,20 +1,16 @@
 <template>
-<transition name="dialog">
-    <div class="dialog"
-        v-if="show">
-        <transition name="dia">
-            <div class="box">
-                <div class="title">{{ title }}</div>
-                <p v-if="msg">{{ msg }}</p>
-                <div class="btn">
-                    <span @click="$emit('close')">取消</span>
-                    <span @click="$emit('confirm')"
-                        style="color: #ee0a24;">确定</span>
-                </div>
-            </div>
-        </transition>
+<div class="dialog"
+    :class="{ 'active': show }">
+    <div class="box">
+        <div class="title">{{ title }}</div>
+        <p v-if="msg">{{ msg }}</p>
+        <div class="btn">
+            <span @click="$emit('close')">取消</span>
+            <span @click="$emit('confirm')"
+                style="color: #ee0a24;">确定</span>
+        </div>
     </div>
-</transition>
+</div>
 </template>
 <script>
 export default {
@@ -31,32 +27,11 @@ export default {
             type: String,
             default: ''
         }
-    }
+    },
 }
 </script>
 <style scoped
     lang="scss">
-
-    .dia-enter-active,
-    .dialog-leave-active {
-        transition: all 0.5s ease;
-    }
-
-    .dialog-enter-active,
-    .dia-leave-active {
-        transition: all 0.3s ease;
-    }
-
-    .dialog-enter,
-    .dialog-leave-to {
-        opacity: 0;
-    }
-
-    .dia-enter,
-    .dia-leave-to {
-        transform: scale(0.3);
-    }
-
     .dialog {
         position: fixed;
         top: 0;
@@ -64,13 +39,25 @@ export default {
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        z-index: -1;
+        opacity: 0;
+        transition: all 0.3s ease;
+
+        &.active {
+            opacity: 1;
+            z-index: 999;
+
+            .box {
+                transform: translateX(-50%) scale(1);
+            }
+        }
 
         .box {
             position: absolute;
             top: 35%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) scale(0.3);
+            transition: all 0.3s ease;
             background-color: #fff;
             width: 320px;
             border-radius: 16px;

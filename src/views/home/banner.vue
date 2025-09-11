@@ -55,7 +55,6 @@ export default {
             touchTime: 0, // 触摸时间
             timer: null, // 自动播放定时器
             startX: 0, // 触摸开始位置
-            endX: 0, // 触摸结束位置
         };
     },
     computed: {
@@ -117,24 +116,30 @@ export default {
         // 下一张
         nextSlide() {
             this.currentIndex++;
-            setTimeout(() => {
-                if (this.currentIndex > this.slides.length) {
+            if (this.currentIndex > this.slides.length) {
+                setTimeout(() => {
                     // 无缝滚动处理：立即跳到第一张，无过渡效果
                     this.$refs.carouselTrack.style.transition = 'none';
                     this.currentIndex = 1;
-                }
-            }, 300);
+                    setTimeout(() => {
+                        this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
+                    }, 50);
+                }, 300);
+            }
         },
 
         // 上一张
         prevSlide() {
             this.currentIndex--;
-            setTimeout(() => {
-                if (this.currentIndex < 1) {
+            if (this.currentIndex < 1) {
+                setTimeout(() => {
                     this.$refs.carouselTrack.style.transition = 'none';
                     this.currentIndex = this.slides.length;
-                }
-            }, 300);
+                    setTimeout(() => {
+                        this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
+                    }, 50);
+                }, 300);
+            }
         },
 
         // 绑定触摸事件
@@ -160,13 +165,11 @@ export default {
         handleTouchStart(e) {
             this.$refs.carouselTrack.style.transition = 'none';
             this.startX = e.touches[0].clientX;
-            this.endX = e.touches[0].clientX;
             this.touchTime = new Date();
             this.clearTimer();
         },
 
         handleTouchMove(e) {
-            this.endX = e.touches[0].clientX;
             const diffX = e.touches[0].clientX - this.startX;
             const containerWidth = this.$refs.carouselContainer.offsetWidth;
             const x = this.currentIndex * 100 - diffX / containerWidth * 100;
@@ -174,9 +177,9 @@ export default {
         },
 
         // 触摸结束处理
-        handleTouchEnd() {
+        handleTouchEnd(e) {
             this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-            const diffX = this.endX - this.startX;
+            const diffX = e.changedTouches[0].clientX - this.startX;
             const time = new Date() - this.touchTime;
 
             let shouldChange = false;
@@ -212,6 +215,7 @@ export default {
 }
 
 .carousel-track {
+    transition: transform 0.3s ease;
     display: flex;
     width: 100%;
     height: 100%;
