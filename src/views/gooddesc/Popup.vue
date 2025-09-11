@@ -45,11 +45,7 @@
     </div>
 
     <div class="button">
-        <button @click="$emit('addCart', {
-            num,
-            color,
-            gMemory
-        })">加入购物车</button>
+        <button @click="addToCartWithAnimation">加入购物车</button>
         <button>立即购买</button>
     </div>
 </div>
@@ -64,9 +60,6 @@ export default {
             gMemory: '',
             img: JSON.parse(sessionStorage.getItem('img'))
         }
-    },
-    mounted() {
-
     },
     methods: {
         handleColor(color, e) {
@@ -85,9 +78,16 @@ export default {
             this.gMemory = gMemory
         },
         togglePopup() {
-            if (this.show) {
-                this.$emit('update:show', false);
-            }
+            if (this.show) this.$emit('update:show', false);
+        },
+        addToCartWithAnimation() {
+            // 触发添加到购物车事件
+            this.$emit('addCart', {
+                num: this.num,
+                color: this.color,
+                img: this.img,
+                gMemory: this.gMemory
+            });
         }
     }
 }

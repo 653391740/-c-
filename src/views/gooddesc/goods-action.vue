@@ -39,7 +39,7 @@ export default {
     async mounted() {
         if (localStorage.getItem('userinfo')) {
             const { list } = await cartlist()
-            this.cartCount = list.length
+            if (list !== null) this.cartCount = list.length
         }
     },
     methods: {
@@ -47,18 +47,106 @@ export default {
             const userinfo = JSON.parse(localStorage.getItem('userinfo'))
             if ([obj.color, obj.gMemory].every(e => e)) {
                 if (!userinfo) return this.$popupMsg.warn('请先登录')
-                const { msg, list } = await cartadd({
+                // 创建飞动动画
+                this.createFlyAnimation(obj.img);
+                this.showPopup = false
+                const { msg, list: { cartCount } } = await cartadd({
                     uid: userinfo.uid,
                     num: obj.num,
                     goodsid: this.$route.query.id
                 })
-                const { cartCount } = list
                 this.$msg(msg)
                 this.cartCount = cartCount
-                this.showPopup = false
             } else {
                 this.$msg('请先选择商品规格')
             }
+        },
+        createFlyAnimation(img) {
+            // 获取商品图片元素
+            const productImg = document.querySelector('.popups .head img');
+
+            // 获取购物车元素
+            const cartElement = document.querySelector('.goods-action .icon-gouwuche');
+
+            // 获取位置信息
+            const productRect = productImg.offset();
+            const cartRect = cartElement.getBoundingClientRect();
+            console.log(productRect);
+            
+
+
+            // 计算起点（商品图片中心）
+            const startX = productRect.left + productRect.width / 2;
+            const startY = productRect.top + productRect.height / 2;
+
+            // 计算终点（购物车图标中心）
+            const endX = cartRect.left + cartRect.width / 2;
+            const endY = cartRect.top + cartRect.height / 2;
+
+            // 计算控制点（形成抛物线）
+            // 控制中间点X在起点右侧 形成右抛
+            const controlX = startX + 200;
+            // 控制点Y在起点上方，形成上抛
+            const controlY = startY - 150;
+
+            // 创建飞动的图片元素
+            const flyImg = document.createElement('img');
+            flyImg.src = img;
+            flyImg.style.position = 'fixed';
+            flyImg.style.width = '96px';
+            flyImg.style.height = '96px';
+            flyImg.style.zIndex = '1000';
+            flyImg.style.left = `${startX}px`;
+            flyImg.style.top = `${startY}px`;
+            flyImg.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(flyImg);
+
+            // 使用requestAnimationFrame实现抛物线动画
+            const duration = 600; // 动画持续时间（毫秒）
+            const startTime = performance.now();
+
+            const animate = (currentTime) => {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+
+                // 使用二次贝塞尔曲线公式计算当前位置
+                // P = (1−t)²P₁ + 2(1−t)tP₂ + t²P₃
+                const t = progress; // 参数t，范围从0到1
+                const oneMinusT = 1 - t;
+
+                // 计算X坐标
+                const currentX = oneMinusT * oneMinusT * startX +
+                    2 * oneMinusT * t * controlX +
+                    t * t * endX;
+
+                // 计算Y坐标
+                const currentY = oneMinusT * oneMinusT * startY +
+                    2 * oneMinusT * t * controlY +
+                    t * t * endY;
+
+                // 更新飞动图片位置
+                flyImg.style.left = `${currentX}px`;
+                flyImg.style.top = `${currentY}px`;
+
+                // 随着动画进行，逐渐缩小并降低透明度
+                const scale = 1 - progress * 0.8;
+                const opacity = 1 - progress * 0.5;
+                const radius = progress * 100 / 1.5;
+                flyImg.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                flyImg.style.opacity = opacity;
+                flyImg.style.borderRadius = `${radius}%`;
+
+                // 继续动画或结束
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    document.body.removeChild(flyImg);
+                }
+            };
+
+            // 调用 requestAnimationFrame 方法来启动动画循环，将 animate 函数作为回调传入。
+            // requestAnimationFrame 会在浏览器下一次重绘之前调用该回调函数，从而实现平滑的动画效果。
+            requestAnimationFrame(animate);
         }
     },
     components: {
@@ -78,6 +166,7 @@ export default {
         display: flex;
         align-items: center;
         z-index: 99;
+        background-color: #fff;
 
         ul {
             display: flex;

@@ -3,7 +3,6 @@
     <div class="top">
         <ul>
             <li v-for="e, i in list"
-                @click="cl"
                 @touchstart="touchstart($event, i)"
                 @touchmove="touchmove($event, i)"
                 @touchend="touchend($event, i)"
@@ -119,7 +118,7 @@ export default {
         },
         touchstart(e, i) {
             const index = this.list.findIndex(e => e.isdel)
-            if (index !== i) this.cl()
+            this.cl()
             this.startX = e.touches[0].clientX
             this.startY = e.touches[0].clientY
             this.slideDirection = null
@@ -135,10 +134,10 @@ export default {
                 this.$refs.li[i].style.transition = `all .5s`
                 this.moveX = e.changedTouches[0].clientX
                 const deltaX = this.moveX - this.startX
-                if (deltaX < -10) {
+                if (deltaX < 0) {
                     this.$refs.li[i].style.transform = `translateX(-60px)`
                     this.list[i].isdel = true
-                } else if (deltaX > 10) {
+                } else if (deltaX > 0) {
                     this.$refs.li[i].style.transform = `translateX(0px)`
                     this.list[i].isdel = false
                 }

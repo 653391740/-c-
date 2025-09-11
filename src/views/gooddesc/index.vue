@@ -13,6 +13,9 @@
             商品的价格 :¥{{ goodsinfo.price }}
         </div>
     </div>
+    <div class="desc"
+        v-html="goodsinfo.description">
+    </div>
     <GoodsAction></GoodsAction>
 </div>
 </template>
@@ -38,6 +41,7 @@ export default {
         async getgoodsinfo() {
             let { list } = await getgoodsinfo({ id: this.$route.query.id })
             this.goodsinfo = list[0]
+
             sessionStorage.setItem('img', JSON.stringify('http://43.138.15.137:4000' + this.goodsinfo.img))
         }
     }
@@ -49,7 +53,6 @@ export default {
     .gooddesc {
         height: 100%;
         padding-top: 44px;
-        padding-bottom: 50px;
 
         .banner {
             width: 100%;
@@ -71,6 +74,22 @@ export default {
 
         .info {
             font-size: 14px;
+        }
+
+        .desc {
+            background-color: #fff;
+            padding-bottom: 50px;
+
+            ::v-deep img {
+                height: auto !important;
+                left: 0 !important;
+                transform: translate(0) !important;
+            }
+
+            ::v-deep .img-box {
+                width: 100% !important;
+                height: 319px !important;
+            }
         }
     }
 </style>
