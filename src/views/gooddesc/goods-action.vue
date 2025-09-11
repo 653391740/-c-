@@ -57,7 +57,7 @@ export default {
                 })
                 this.$msg(msg)
                 this.cartCount = cartCount
-            } else {
+            } else { 
                 this.$msg('请先选择商品规格')
             }
         },
@@ -69,7 +69,7 @@ export default {
             const cartElement = document.querySelector('.goods-action .icon-gouwuche');
 
             // 获取位置信息
-            const productRect = productImg.offset();
+            const productRect = productImg.getBoundingClientRect();
             const cartRect = cartElement.getBoundingClientRect();
             console.log(productRect);
             
