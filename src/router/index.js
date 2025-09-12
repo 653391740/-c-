@@ -102,6 +102,11 @@ const routes = [
         name: 'Pay',
         component: () => import('@/views/pay.vue')
     },
+    {
+        path: '/search',
+        name: 'Search',
+        component: () => import('@/views/search.vue')
+    }
 ]
 
 const router = new VueRouter({

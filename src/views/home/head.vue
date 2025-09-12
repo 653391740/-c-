@@ -6,7 +6,7 @@
         <div class="input">
             <span class="iconfont icon-sousuo"></span>
             <input type="text"
-                placeholder="请输入关键字">
+                placeholder="请输入关键字" @focus="search">
         </div>
         <span class="iconfont icon-store"></span>
     </div>
@@ -49,6 +49,11 @@ export default {
                     this.$refs.nav.children[0].click();
                 })
             }
+        },
+        search() {
+            this.$router.push({
+                path: '/search'
+            })
         },
         changeIndex(index, e) {
             const line = this.$refs.line;

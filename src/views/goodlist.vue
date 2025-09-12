@@ -67,6 +67,10 @@ export default {
     },
     mounted() {
         this.params = { ...this.params, ...this.$route.query };
+        if (this.$route.query.keywords) {
+            this.goodlist = JSON.parse(sessionStorage.getItem('searchList')) || []
+            this.params = null
+        }
     },
     methods: {
         toggleSort() {

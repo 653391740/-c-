@@ -24,3 +24,8 @@ export const getgoodlist = (params) => {
 export const getgoodsinfo = (params) => {
     return http.get('getgoodsinfo', { params })
 }
+// 搜索
+export const search = (params) => {
+    return http.get('search', { params })
+}
+
