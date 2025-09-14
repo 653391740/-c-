@@ -1,7 +1,6 @@
 <template>
 <div class="good">
     <Title title="商品列表"
-        :go="this.$route.query.id ? 2 : 1"
         back></Title>
     <div class="head">
         <div class="search">
@@ -37,7 +36,7 @@ import {
     getgoodlist
 } from '@/api/home'
 import Title from '@/components/title.vue';
-import goodslist from '@/components/goodslist.vue';
+import goodslist from '@/components/goodlist.vue';
 export default {
     components: {
         Title,

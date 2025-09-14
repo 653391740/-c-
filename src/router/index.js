@@ -15,23 +15,23 @@ const routes = [
                 path: '/home',
                 name: 'Home',
                 meta: { keepAlive: true },
-                component: () => import('@/views/home/index.vue'),
+                component: () => import('@/views/index/home/index.vue'),
             },
             {
                 path: '/cate',
                 name: 'Cate',
                 meta: { keepAlive: true },
-                component: () => import('@/views/cate/index.vue'),
+                component: () => import('@/views/index/cate/index.vue'),
             },
             {
                 path: '/cart',
                 name: 'Cart',
-                component: () => import('@/views/cart/index.vue'),
+                component: () => import('@/views/index/cart/index.vue'),
             },
             {
                 path: '/user',
                 name: 'User',
-                component: () => import('@/views/user/index.vue'),
+                component: () => import('@/views/index/user/index.vue'),
             },
         ]
     },
@@ -58,7 +58,7 @@ const routes = [
     {
         path: '/goodslist',
         name: 'Goodslist',
-        component: () => import('@/views/goodlist.vue'),
+        component: () => import('@/views/goodslist.vue'),
     },
     {
         path: '/gooddesc',
@@ -69,12 +69,12 @@ const routes = [
         path: '/useredit',
         name: 'Useredit',
         meta: { keepAlive: true },
-        component: () => import('@/views/user/useredit.vue'),
+        component: () => import('@/views/index/user/useredit.vue'),
     },
     {
         path: '/orderconfirm',
         name: 'Orderconfirm',
-        component: () => import('@/views/cart/orderconfirm.vue')
+        component: () => import('@/views/index/cart/orderconfirm.vue')
     },
     {
         path: '/addresslist',

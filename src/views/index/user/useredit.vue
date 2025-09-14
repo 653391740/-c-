@@ -73,7 +73,7 @@ import { getuserinfo, infoedit } from '@/api/login'
 import Popup from '@/components/Popup.vue';
 import Title from '@/components/title.vue'
 import Calendar from './calendar.vue'
-import Region from '../../components/region.vue'
+import Region from '@/components/region.vue'
 export default {
     components: {
         Title,

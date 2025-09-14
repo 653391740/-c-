@@ -24,11 +24,7 @@ export default defineConfig({
     }
   },
   server: {
-    host: '0.0.0.0', // 允许外部访问
+    host: '0.0.0.0',
     open: true,
-    watch: {
-      usePolling: true,
-      interval: 100
-    }
   }
 })

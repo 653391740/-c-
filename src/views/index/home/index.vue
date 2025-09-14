@@ -29,11 +29,11 @@ import {
     gethortgoods
 } from '@/api/home'
 import Title from '@/components/title.vue'
-import Head from '@/views/home/head.vue'
-import Banner from '@/views/home/banner.vue'
-import Nav from '@/views/home/nav.vue'
-import Tuijian from '@/views/home/tuijian.vue'
-import Goodslist from '@/components/goodslist.vue'
+import Head from './head.vue'
+import Banner from './banner.vue'
+import Nav from './nav.vue'
+import Tuijian from './tuijian.vue'
+import Goodslist from '@/components/goodlist.vue'
 
 export default {
     name: 'Home',

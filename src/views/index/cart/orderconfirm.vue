@@ -29,7 +29,7 @@
 <script>
 import Title from '@/components/title.vue'
 import Dingdan from '@/components/dingdan.vue'
-import Goodslist from '@/components/goodslist.vue'
+import Goodslist from '@/components/goodlist.vue'
 import { addresslist, orderadd } from '@/api/cart'
 export default {
     components: {

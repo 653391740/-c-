@@ -7,7 +7,7 @@
             @keyup.enter="search"
             placeholder="请输入搜索内容">
         <span class="iconfont icon-sousuo"
-            @click="search"></span>
+            @click="search(searchText)"></span>
     </div>
     <div class="content">
         <div class="history"
@@ -18,6 +18,7 @@
             </div>
             <ul>
                 <li v-for="(item, index) in history"
+                    @click="getSearch(item)"
                     :key="index">
                     {{ item }}
                 </li>
@@ -27,7 +28,7 @@
             <div class="title">搜索发现</div>
             <ul>
                 <li v-for="(item, index) in list"
-                    @click="active(item)"
+                    @click="getSearch(item)"
                     :key="index">
                     {{ item }}
                 </li>
@@ -54,28 +55,23 @@ export default {
         clearSearches() {
             this.history = []
         },
-        async search() {
-            if (this.searchText === '') return
-            const text = this.searchText
-            let { list } = await search({ keywords: text })
+        async getSearch(val) {
+            let { list } = await search({ keywords: val })
             sessionStorage.setItem('searchList', JSON.stringify(list))
-            this.save()
             this.$router.push({
                 path: '/goodslist',
                 query: {
-                    keywords: text
+                    keywords: val
                 }
             })
         },
-        active(item) {
-            this.searchText = item
-            this.search()
-        },
-        save() {
+        search() {
+            if (this.searchText === '') return
             this.history.unshift(this.searchText)
             localStorage.setItem('history', JSON.stringify(this.history))
+            this.getSearch(this.searchText)
             this.searchText = ''
-        }
+        },
     }
 }
 </script>

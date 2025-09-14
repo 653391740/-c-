@@ -28,6 +28,8 @@ service.interceptors.response.use(response => {
     return response.data;
 }, error => {
     // 处理请求超时逻辑
+    console.log(error);
+
     if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
         msg('请求超时，请检查网络连接后重试')
     }

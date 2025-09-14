@@ -26,7 +26,7 @@
                     }"
                     :style="{
                         marginLeft: dayIndex === 0
-                            ? `${monthData.upDay * 100 / 7}%` : '0'
+                            ? `${monthData.firstDayOfWeek * 100 / 7}%` : '0'
                     }"
                     @click="selectDate(day)">
                     {{ day.day }}
@@ -67,13 +67,18 @@ export default {
         },
         // 生成日历数据
         CalendarData() {
+            // 获取当前年份
             const currentYear = this.today.getFullYear();
+            // 获取当前月份
             const currentMonth = this.today.getMonth();
 
+            // 生成前10年的日历数据
             for (let yearOffset = 10; yearOffset > 0; yearOffset--) {
+                // 计算年份 10 9 8 ...年前
                 const year = currentYear - yearOffset;
-
+                // 计算1-12月份
                 for (let month = 0; month < 12; month++) {
+                    // 函数生成指定年，月的数据放到数据数组中
                     this.calendarData.push(this.MonthData(year, month));
                 }
             }
@@ -83,31 +88,30 @@ export default {
             }
         },
         MonthData(year, month) {
-            const firstDay = new Date(year, month, 1); // 第一天
-            const lastDay = new Date(year, month + 1, 0); // 最后一天
-            const firstDayOfWeek = firstDay.getDay(); // 第一天是周几
+            // 1代表该月第一天以此类推 0上月最后一天
+            // 该月的第一天
+            const firstDay = new Date(year, month, 1);
+            // 该月的最后一天
+            const lastDay = new Date(year, month + 1, 0);
 
-            const days = [];
-            let upDay = 0
+            // 第一天是周几 0 是周日 1 是周一
+            const firstDayOfWeek = firstDay.getDay();
 
+            const days = []; // 用于接收该月的所有日期
 
-            // 添加上个月的最后几天
-            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-                upDay++
-            }
+            // lastDay.getDate() 是该月的天数
             for (let i = 1; i <= lastDay.getDate(); i++) {
                 const date = new Date(year, month, i);
                 days.push({
                     day: i,
                     date,
-                    isCurrentMonth: true // 标记为当前月
                 });
             }
             return {
                 year,
                 month: month + 1,
                 days,
-                upDay
+                firstDayOfWeek
             };
         },
         // 判断给定日期是否为今天
@@ -133,13 +137,9 @@ export default {
         },
         // 选择日期
         selectDate(day) {
-            if (day.isCurrentMonth) {
-                const selectedDate = day.date;
-                if (selectedDate > this.today) {
-                    return;
-                }
-                this.selectedDate = selectedDate;
-            }
+            const selectedDate = day.date;
+            if (selectedDate > this.today) return;
+            this.selectedDate = selectedDate;
         },
     }
 }

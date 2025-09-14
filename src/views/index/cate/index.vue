@@ -12,8 +12,8 @@ import {
     getcates
 } from '@/api/home'
 import Title from '@/components/title.vue';
-import Aside from '@/views/cate/aside.vue'
-import SelectContent from '@/views/cate/select__content.vue'
+import Aside from './aside.vue'
+import SelectContent from './select__content.vue'
 
 export default {
     name: 'Cate',
