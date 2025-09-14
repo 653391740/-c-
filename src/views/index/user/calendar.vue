@@ -1,7 +1,7 @@
 <template>
 <div class="calendar">
     <div class="head-title">日期选择</div>
-    <div class="head-subtitle">2025年9月</div>
+    <div class="head-subtitle">{{ scrollmonth }}</div>
     <div class="weekdays">
         <div class="weekday"
             v-for="day in ['日', '一', '二', '三', '四', '五', '六']"
@@ -46,24 +46,35 @@ export default {
         return {
             calendarData: [],
             selectedDate: null, // 选择的日期
-            today: new Date() // 当前日期
+            today: new Date(), // 当前日期
+            scrollmonth: null,
         }
     },
-    created() {
-        this.CalendarData();
-    },
     mounted() {
+        this.CalendarData();
         this.$nextTick(() => {
-            const Container = this.$refs.calendarContainer
+            const Container = this.$refs.calendarContainer;
+            let height = 0;
+            Array.from(Container.children).forEach((e, i) => {
+                this.calendarData[i].height = height;
+                if (i !== Container.children.length - 1) {
+                    height += e.offsetHeight + 20;
+                }
+            });
             Container.scrollTop = Container.scrollHeight;
         });
     },
     methods: {
         handleScroll() {
-            const Container = this.$refs.calendarContainer
+            const Container = this.$refs.calendarContainer;
             const scrollTop = Container.scrollTop;
-            const scrollHeight = Container.scrollHeight;
-            const clientHeight = Container.clientHeight;
+            console.log(scrollTop);
+            for (let i = Array.from(Container.children).length - 1; i >= 0; i--) {
+                if (scrollTop >= this.calendarData[i].height) {
+                    this.scrollmonth = `${this.calendarData[i].year}年${this.calendarData[i].month}月`;
+                    break;
+                }
+            }
         },
         // 生成日历数据
         CalendarData() {
@@ -141,7 +152,7 @@ export default {
             if (selectedDate > this.today) return;
             this.selectedDate = selectedDate;
         },
-    }
+    },
 }
 </script>
 
@@ -220,6 +231,7 @@ export default {
                         width: calc(100% / 7);
                         height: 54px;
                         line-height: 54px;
+                        margin: 5px 0;
                         cursor: pointer;
 
                         &.other-month {
