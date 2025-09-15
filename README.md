@@ -35,8 +35,7 @@ npm create vue 严选商城C端
     -   修改: 在 `package.json` 中将 `vite` 的版本改为 `"^4.5.0"`
 
 -   **路由管理**: 添加了 Vue Router
-
-    -   修改: 在 `package.json` 中添加了 `"vue-router": "^3.6.5"`
+-   修改: 在 `package.json` 中添加了 `"vue-router": "^3.6.5"`
 
 ### 3. 依赖安装
 
@@ -47,11 +46,6 @@ npm install
 ```
 
 **安装的依赖**:
-
--   **SCSS 支持**: 用于样式预处理
-
-    -   安装命令: `npm install sass@^1.90.0`
-    -   用途: 提供 SCSS 样式预处理支持
 
 -   **移动端适配**: 用于将 px 单位转换为 viewport 单位
 
@@ -333,63 +327,52 @@ export default router;
 
 ## 遇到的问题
 
-### 4. 底部导航栏状态管理
+### 1. 底部导航栏状态管理
 
--   **问题描述**: 选择完商品跳转购物车页面，底部不会高亮,。
--   **解决方案**: 使用 activeIndex 变量控制高亮状态，通过判断 token 是否存在来动态显示用户中心文本。
--   **后期优化**:
+-   **问题描述**: 商品详情页跳转购物车页面，底部高亮不会跟随路由的激活而激活,而是根据底部导航栏点击激活。
+-   **解决方案**: 把导航栏点击激活改为后置守卫跟随路由变化而变化,并且临时存储刷新不丢失
 
     ```javascript
-        data() {
-            return {
-                token: '',
-                activeIndex: JSON.parse(sessionStorage.getItem('activeIndex')) || 0,
-                navItems: [
-                    {
-                        path: '/home', text: '商场',
-                        icon: 'iconfont icon-zhuye'
-                    },
-                    {
-                        path: '/cate', text: '分类',
-                        icon: 'iconfont icon-fenlei1'
-                    },
-                    {
-                        path: '/cart', text: '购物车',
-                        icon: 'iconfont icon-gouwu'
-                    },
-                    {
-                        path: '/user', text: '用户',
-                        icon:'iconfont icon-denglu-copy',
-                        dynamicText: true
-                    }
-                ]
-            }
-        },
-        created() {
-            const userinfoStr = localStorage.getItem('userinfo');
-            this.token = userinfoStr ? JSON.parse(userinfoStr).token : null;
-            this.$router.afterEach((to, from) => {
-                // 处理底部导航栏状态
-                this.activeIndex = this.navItems.findIndex(item => item.path === to.path);
-                if (this.activeIndex === -1) return // 未匹配到路由不进行存储
-                sessionStorage.setItem('activeIndex', JSON.stringify(this.activeIndex))
-            })
-        },
+    data() {
+        return {
+            token: '',
+            activeIndex: JSON.parse(sessionStorage.getItem('activeIndex')) || 0,
+            navItems: [
+                {
+                    path: '/home', text: '商场',
+                    icon: 'iconfont icon-zhuye'
+                },
+                {
+                    path: '/cate', text: '分类',
+                    icon: 'iconfont icon-fenlei1'
+                },
+                {
+                    path: '/cart', text: '购物车',
+                    icon: 'iconfont icon-gouwu'
+                },
+                {
+                  path: '/user', text: '用户',
+                  icon:'iconfont icon-denglu-copy',
+                  dynamicText: true
+                }
+            ]
+        }
+    },
+    created() {
+        const userinfoStr = localStorage.getItem('userinfo');
+        this.token = userinfoStr ? JSON.parse(userinfoStr).token : null;
+        this.$router.afterEach((to, from) => {
+            // 处理底部导航栏状态
+            this.activeIndex = this.navItems.findIndex(item => item.path === to.path);
+            if (this.activeIndex === -1) return // 未匹配到路由不进行存储
+            sessionStorage.setItem('activeIndex', JSON.stringify(this.activeIndex))
+        })
+    },
     ```
 
-### 5. 页面组件结构设计
+### 2. 商品列表滚动加载问题
 
--   **问题描述**: 如何设计页面组件结构以实现底部导航栏固定，内容区域可滚动的效果。
--   **解决方案**: 在 App.vue 中设置 padding-bottom 为底部导航栏高度，内容区域可滚动，底部导航栏使用 fixed 定位。
-
-### 6. 网络请求封装
-
--   **问题描述**: 需要封装网络请求模块，处理请求拦截、响应拦截、错误处理等。
--   **解决方案**: 计划基于 axios 封装 request 模块，统一处理请求头、token、错误处理等。
-
-### 7. 商品列表滚动加载问题
-
--   **问题描述**: 在 goodslist.vue 组件中，滚动加载功能存在问题。第 86 行的条件判断`if (this.params && !this.loading)`应该放在滚动事件监听内部，而不是外部。目前只有开始触发一下，导致一直滚动不刷新。
+-   **问题描述**: 在 goodlist.vue 组件中，滚动加载功能存在问题。第 86 行的条件判断`if (this.params && !this.loading)`应该放在滚动事件监听内部，而不是外部。目前只有开始触发一下，导致一直滚动不刷新。
 
 -   **问题原因**: 滚动事件监听没有进行条件判断，导致每次滚动都会触发 loadmore 方法，而 loadmore 方法内部虽然有条件判断，但无法阻止滚动事件的频繁触发。
 
@@ -398,24 +381,26 @@ export default router;
 -   **代码修改建议**:
 
     ```javascript
-    // 修改前
-    if (this.params && !this.loading) {
+    mounted() {
+        // 修改前
+        if (this.params && !this.loading) {
+            window.addEventListener("scroll", () => {
+                this.loadmore();
+            });
+        }
+
+        // 修改后
         window.addEventListener("scroll", () => {
-            this.loadmore();
+            if (this.params && !this.loading) {
+                this.loadmore();
+            }
         });
     }
-
-    // 修改后
-    window.addEventListener("scroll", () => {
-        if (this.params && !this.loading) {
-            this.loadmore();
-        }
-    });
     ```
 
-### 8. 购物车页面上下滑动触发左右滑动问题
+### 3. 购物车页面上下滑动触发左右滑动问题
 
--   **问题描述**: 在购物车页面（cart.vue）中，用户上下滑动浏览商品时左滑动会显示删除按钮，导致用户体验不佳。
+-   **问题描述**: 在购物车页面（cart.vue）中，用户上下滑动浏览商品时左滑动会显示删除按钮，影响用户体验。
 
 -   **问题原因**: 原始代码中，购物车商品的滑动删除功能没有区分什么时候展开，导致上下滑动偏左方向的滑动会拉出删除按钮。
 
@@ -459,9 +444,9 @@ export default router;
 
         if (this.slideDirection === null) {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                this.slideDirection = 'horizontal'
+                this.slideDirection = 'horizontal' // 水平
             } else {
-                this.slideDirection = 'vertical'
+                this.slideDirection = 'vertical' // 垂直
             }
         }
 
@@ -480,7 +465,7 @@ export default router;
 
 -   **实现效果**: 通过这种方式，系统能够准确区分用户的上下滑动和左右滑动意图，当用户上下滑动浏览商品时不会触发删除操作，只有明显的水平滑动才会触发删除功能，提升了用户体验，减少了误操作。
 
-### 10. 地区选择器遮罩层阻止滚动问题
+### 4. 地区选择器遮罩层阻止滚动问题
 
 -   **问题描述**: 在地区选择器组件（region.vue）中，遮罩层（.pop）覆盖在内容上，导致无法滚动下方内容。
 
@@ -510,253 +495,146 @@ export default router;
 
 -   **实现效果**: 通过添加`pointer-events: none`属性，遮罩层不再拦截鼠标/触摸事件，用户可以正常滚动选择地区，同时保持了遮罩层的视觉效果。
 
-### 11. 轮播图快速滑动卡顿问题
+### 5. 轮播图快速滑动卡顿问题 及 无缝后无过渡效果
 
 -   **问题描述**: 在首页轮播图组件（banner.vue）中，用户快速滑动时轮播图会出现"抽抽"的卡顿现象，影响用户体验。
 
 -   **问题原因**: 原始代码中，轮播图的触摸事件处理与过渡动画之间存在冲突，主要问题点包括：
 
     1. 在 `handleTouchMove` 中直接修改 transform 属性，但与状态管理存在冲突
-    2. 触摸结束后的判断逻辑不够精确，导致快速滑动时状态不一致
-    3. 过渡动画的开启和关闭时机不够精确，导致快速滑动时出现卡顿
-    4. 模板中的内联样式绑定与 JavaScript 中的样式控制存在冲突
+    2. 模板中的内联样式绑定与 JavaScript 中的样式控制存在冲突
+    3. 无缝滚动后未重新开启过渡效果
 
 -   **解决方案**: 通过优化触摸事件处理逻辑和状态管理，改进轮播图的滑动体验：
 
     1. **模板结构优化**：
-
-        - 移除模板中的内联样式绑定，改为在 JavaScript 中动态控制
-        - 将 Container 重命名为 carouselContainer 以保持命名一致性
-        - 简化模板结构，提高渲染性能
-
-    2. **触摸事件处理优化**：
-
-        - 在触摸开始时，明确设置过渡效果为 'none'，确保触摸时可以立即响应
-        - 在触摸移动时，添加了 `e.preventDefault()` 阻止默认行为，防止页面滚动
-        - 简化了触摸事件处理逻辑，移除了冗余的条件检查
-
-    3. **触摸结束逻辑优化**：
-
+        - 移除模板中多余的内联样式绑定，改为只在 JavaScript 中动态控制
+    2. **触摸结束逻辑优化**：
         - 引入了`touchTime`记录触摸开始时间，根据时间和距离综合判断是否切换轮播图
         - 优化了切换条件：快速滑动（按下松开间隔<300ms）且距离>10 像素，或者慢速滑动但距离>屏幕宽度的 1/3
         - 在触摸结束时恢复过渡效果，确保切换动画流畅
         - 直接调用 `prevSlide` 和 `nextSlide` 方法，而不是手动修改 `currentIndex`
-        - 统一了边界情况的处理逻辑，与自动轮播保持一致
-
-    4. **自动轮播逻辑优化**：
-
+    3. **自动轮播逻辑优化**：
         - 在 `nextSlide` 和 `prevSlide` 方法中，明确设置过渡效果
-        - 优化了无缝滚动的处理，在到达边界时立即跳转并移除过渡效果
+        - 优化了无缝滚动的处理，在到达边界时立即跳转并移除过渡效果,同步执行完成后执行 setTimeout 微任务 重新打开过渡效果
         - 简化了状态管理逻辑，确保状态转换的一致性
-
-    5. **统一位置管理**：
-
+    4. **统一位置管理**：
         - 添加了 `updateCarouselPosition` 方法统一管理轮播图位置
         - 添加了对 `currentIndex` 的监听，只需要专注于控制下标，而不需要手动修改位置
-
-    6. **初始化流程优化**：
+    5. **初始化流程优化**：
         - 确保在获取轮播图数据后再初始化轮播图位置和自动播放
         - 在组件卸载时清除定时器，防止内存泄漏
 
 -   **代码修改要点**:
 
-    ```javascript
-        // 模板部分
-    <template>
-    <div class="carousel-container" ref="carouselContainer">
-        <!-- 轮播图轨道 -->
-        <div class="carousel-track" ref="carouselTrack">
-            <!-- 轮播项 -->
-        </div>
-    </div>
-    </template>
+    1. **模板结构优化**：
 
-    // 脚本部分
-    export default {
-        data() {
-            return {
-                slides: [],
-                currentIndex: 1,
-                timer: null,
-                startX: 0,
-                touchTime: 0,
-            };
-        },
-        mounted() {
-            this.getbanner()
-            this.bindTouchEvents();
-        },
-        watch: {
-            currentIndex() {
-                this.updateCarouselPosition();
-            }
-        },
-        methods: {
-            // 获取到数据后初始化轮播图开启自动轮播
-            async getbanner() {
-                    const { code, list } = await getbanner()
-                    if (code === 200) {
-                        this.slides = list
-                        this.startAutoPlay();
-                    }
+        ```html
+        <template>
+            <div class="carousel-container" ref="carouselContainer">
+                <!-- 修改前 -->
+                <div class="carousel-track" ref="carouselTrack" :style="{
+                    transition: bianliang ? `transform 0.3s ease` :'none'
+                }">
+
+                <!-- 修改后 -->
+                <div class="carousel-track" ref="carouselTrack">
+                </div>
+            </div>
+        </template>
+        ```
+
+    2. **脚本部分优化**：
+
+        ```javascript
+        export default {
+            data() {
+                return {
+                    slides: [],
+                    currentIndex: 1,
+                    timer: null,
+                    startX: 0,
+                    touchTime: 0,
+                };
+            },
+            watch: {
+                currentIndex() {
+                    this.updateCarouselPosition();
                 },
-
+            },
+            methods: {
                 // 更新轮播图位置
                 updateCarouselPosition() {
-                    this.$refs.carouselTrack.style.transform = `translateX(-${this.currentIndex * 100}%)`;
-            },
+                    this.$refs.carouselTrack.style.transform = `translateX(-${
+                        this.currentIndex * 100
+                    }%)`;
+                },
 
-            // 下一张
-            nextSlide() {
-                this.currentIndex++;
-                if (this.currentIndex > this.slides.length) {
-                    setTimeout(() => {
-                        // 无缝滚动处理：立即跳到第一张，无过渡效果
-                        this.$refs.carouselTrack.style.transition = 'none';
-                        this.currentIndex = 1;
+                // 下一张
+                nextSlide() {
+                    this.currentIndex++;
+                    if (this.currentIndex > this.slides.length) {
                         setTimeout(() => {
-                            this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-                        }, 50);
-                    }, 300);
-                }
-            },
-            // 上一张
-            prevSlide() {
-                this.currentIndex--;
-                if (this.currentIndex < 1) {
-                    setTimeout(() => {
-                        this.$refs.carouselTrack.style.transition = 'none';
-                        this.currentIndex = this.slides.length;
-                        setTimeout(() => {
-                            this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-                        }, 50);
-                    }, 300);
-                }
-            },
-            // 触摸开始处理
-            handleTouchStart(e) {
-                // 触摸开始时，立即移除过渡效果，确保触摸时可以立即响应
-                this.$refs.carouselTrack.style.transition = 'none';
-                this.startX = e.touches[0].clientX;
-                this.touchTime = new Date();
-                this.clearTimer();
-            },
-            // 触摸移动处理
-            handleTouchMove(e) {
-                const diffX = e.touches[0].clientX - this.startX;
-                const containerWidth = this.$refs.carouselContainer.offsetWidth;
-                const x = this.currentIndex * 100 - diffX / containerWidth * 100;
-                this.$refs.carouselTrack.style.transform = `translateX(-${x}%)`;
-            },
-
-            // 触摸结束处理
-            handleTouchEnd(e) {
-                this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-                const diffX = e.changedTouches[0].clientX - this.startX;
-                const time = new Date() - this.touchTime;
-                let shouldChange = false;
-                if (time < 300 && Math.abs(diffX) > 10) {
-                    shouldChange = true;
-                } else if (Math.abs(diffX) > window.innerWidth / 2) {
-                    shouldChange = true;
-                }
-                if (shouldChange) {
-                    if (diffX > 0) {
-                        this.prevSlide();
-                    } else {
-                        this.nextSlide();
+                            this.$refs.carouselTrack.style.transition = "none";
+                            this.currentIndex = 1;
+                            // 添加 setTimeout 宏任务等同步任务执行完成后重新开启过渡效果
+                            setTimeout(() => {
+                                this.$refs.carouselTrack.style.transition =
+                                    "transform 0.3s ease";
+                            }, 10);
+                        }, 300);
                     }
-                } else {
-                    this.updateCarouselPosition();
-                }
-                this.startAutoPlay();
-            }
-        }
-    };
-    ```
-
--   **实现效果**: 通过优化触摸事件处理逻辑和状态管理，轮播图在快速滑动时不再出现卡顿现象，用户体验得到显著提升。同时，无缝滚动效果更加流畅，自动轮播与手动切换之间的转换更加自然。
-
-### 12. 轮播图组件简化实现
-
--   **组件位置**: `src/views/home/banner.vue`
-
--   **主要功能**:
-
-    -   无缝轮播图展示
-    -   自动播放功能（3 秒间隔）
-    -   触摸滑动支持（左右滑动切换）
-    -   轮播图指示器
-    -   响应式设计
+                },
+            },
+        };
+        ```
 
 -   **核心实现**:
 
-    -   使用 Vue 2.7.16 实现轮播图组件
     -   通过 CSS transform 实现轮播效果
     -   使用 touch 事件处理滑动操作
     -   通过复制首尾元素实现无缝滚动
     -   使用定时器实现自动播放
 
--   **组件结构**:
+### 6. 日历组件滚动高度计算问题
 
-    ```html
-    <template>
-        <div class="carousel-container" ref="carouselContainer">
-            <!-- 轮播图轨道 -->
-            <div class="carousel-track" ref="carouselTrack">
-                <!-- 复制最后一张到开头 -->
-                <div class="carousel-item" v-if="slides.length">
-                    <img
-                        :src="
-                            'http://43.138.15.137:4000' +
-                            slides[slides.length - 1].img
-                        "
-                    />
-                </div>
+-   **问题描述**: 在日历组件（calendar.vue）中，计算滚动位置的高度时没有考虑月份之间的间距（margin-bottom: 20px），导致滚动时显示的年月与页面实际位置不一致。
 
-                <!-- 实际轮播项 -->
-                <div
-                    class="carousel-item"
-                    v-for="(slide, index) in slides"
-                    :key="slide.id"
-                >
-                    <img :src="'http://43.138.15.137:4000' + slide.img" />
-                </div>
+-   **问题原因**: 在 calendar.vue 文件的第 61 行，计算每个月份的高度时只添加了元素的高度（e.offsetHeight），但没有考虑 CSS 中定义的月份间距（margin-bottom: 20px）。这导致计算出的高度与实际渲染的高度不匹配，从而影响了滚动时年月显示的准确性。
 
-                <!-- 复制第一张到结尾 -->
-                <div class="carousel-item" v-if="slides.length">
-                    <img :src="'http://43.138.15.137:4000' + slides[0].img" />
-                </div>
-            </div>
+-   **解决方案**: 在计算高度时，除了元素本身的高度外，还需要添加月份之间的间距（20px）。修改代码为`height += e.offsetHeight + 20;`，确保计算的高度与实际渲染的高度一致。
 
-            <!-- 指示器 -->
-            <div class="carousel-indicators" v-if="slides.length > 1">
-                <button
-                    class="indicator"
-                    v-for="(slide, index) in slides"
-                    :key="index"
-                    :class="{ active: index === realIndex }"
-                ></button>
-            </div>
-        </div>
-    </template>
+-   **代码修改**:
+
+    ```javascript
+    mounted() {
+        // 修改前
+        this.$nextTick(() => {
+            const Container = this.$refs.calendarContainer;
+            let height = 0;
+            for (let i = 0; i < Container.children.length; i++) {
+                this.calendarData[i].height = height;
+                if (i !== children.length - 1) {
+                    height += children[i].offsetHeight;
+                }
+            }
+            Container.scrollTop = Container.scrollHeight;
+        });
+
+        // 修改后
+        this.$nextTick(() => {
+            const Container = this.$refs.calendarContainer;
+            const children = Container.children;
+            let height = 0;
+            for (let i = 0; i < Container.children.length; i++) {
+                this.calendarData[i].height = height;
+                if (i !== children.length - 1) {
+                    height += children[i].offsetHeight + 20; // 添加元素高度和月份间距
+                }
+            }
+            Container.scrollTop = Container.scrollHeight;
+        });
+    }
     ```
 
--   **主要方法**:
-
-    -   `getbanner()`: 获取轮播图数据
-    -   `updateCarouselPosition()`: 更新轮播图位置
-    -   `startAutoPlay()`: 开始自动播放
-    -   `clearTimer()`: 清除定时器
-    -   `nextSlide()`: 切换到下一张
-    -   `prevSlide()`: 切换到上一张
-    -   `bindTouchEvents()`: 绑定触摸事件
-    -   `handleTouchStart()`: 处理触摸开始
-    -   `handleTouchMove()`: 处理触摸移动
-    -   `handleTouchEnd()`: 处理触摸结束
-
--   **样式特点**:
-    -   使用 flex 布局实现轮播项排列
-    -   通过 transform 实现轮播效果
-    -   响应式设计，适配不同屏幕尺寸
-    -   简洁的指示器样式
+-   **实现效果**: 通过在计算高度时添加月份间距（20px），确保了计算的高度与实际渲染的高度一致，从而解决了滚动时显示的年月与页面实际位置不一致的问题。用户在滚动日历时，顶部显示的年月能够准确反映当前查看的月份位置。

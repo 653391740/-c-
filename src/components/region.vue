@@ -44,24 +44,20 @@ export default {
                 {
                     StartY: 0, // 触摸开始时的Y坐标
                     MoveY: 0, // 当前移动的Y坐标偏移量
-                    LastMoveY: 0, // 上一次移动的Y坐标偏移量
                     Velocity: 0 // 当前滑动速度（像素/毫秒）
                 },
                 {
                     StartY: 0, // 触摸开始时的Y坐标
                     MoveY: 0, // 当前移动的Y坐标偏移量
-                    LastMoveY: 0, // 上一次移动的Y坐标偏移量
                     Velocity: 0 // 当前滑动速度（像素/毫秒）
                 },
                 {
                     StartY: 0, // 触摸开始时的Y坐标
                     MoveY: 0, // 当前移动的Y坐标偏移量
-                    LastMoveY: 0, // 上一次移动的Y坐标偏移量
                     Velocity: 0 // 当前滑动速度（像素/毫秒）
                 }
             ],
             time: null, // 触摸开始时间
-            lastMoveTime: null, // 上一次移动的时间,
         }
     },
     props: {
@@ -89,14 +85,9 @@ export default {
             this.$emit('update:show', false)
             this.$emit('region-change', `${this.province},${this.citys},${this.areas}`)
         },
-        // handleClick(e, i, index) {
-        //     this.Y[i].MoveY = -index * 44;
-        // },
         handleTouchStart(e, i) {
             this.Y[i].StartY = e.touches[0].clientY - this.Y[i].MoveY;
-            this.lastMoveTime = new Date();
-            // 记录上一次的移动位置，用于计算速度
-            this.Y[i].LastMoveY = this.Y[i].MoveY;
+            this.time = new Date();
             // 重置速度，准备计算新的滑动速度
             this.Y[i].Velocity = 0;
         },
@@ -105,10 +96,9 @@ export default {
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
             const scrollToTheBottom = this.num(i)
             const now = new Date();
-            const deltaTime = now - this.lastMoveTime;// 移动时间距上次差多少毫秒
+            const deltaTime = now - this.time;// 移动时间距上次差多少毫秒
             const deltaMove = scrollDistance - this.Y[i].MoveY;// 移动距离距上次差多少px
             this.Y[i].Velocity = deltaMove / deltaTime; // 移动速度px/ms
-            this.Y[i].LastMoveY = this.Y[i].MoveY; // 上一次移动的位置
 
             // 限制滚动范围，不能超过顶部和底部边界
             this.Y[i].MoveY = scrollDistance > 0 ? 0
@@ -117,8 +107,7 @@ export default {
             // 关闭过渡跟随手动滑动
             dome.style.transition = 'none';
             dome.style.transform = `translateY(${this.Y[i].MoveY}px)`;
-
-            this.lastMoveTime = now;
+            this.time = now;
         },
         num(i) {
             const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
@@ -127,6 +116,21 @@ export default {
         reset(i) {
             this.$refs.calendar.children[i].style.transform = `translateY(0px)`
             this.Y[i].MoveY = 0;
+        },
+        update(type, i) {
+            if (type == 0) {
+                this.province = this.regionlist[i].province
+                this.citys = this.provlist[0].city
+                this.areas = this.citylist[0].area
+                this.reset(1)
+                this.reset(2)
+            } else if (type == 1) {
+                this.citys = this.provlist[i].city
+                this.areas = this.citylist[0].area
+                this.reset(2)
+            } else if (type == 2) {
+                this.areas = this.citylist[i].area
+            }
         },
         handleTouchEnd(e, i) {
             const dome = this.$refs.calendar.children[i]
@@ -143,25 +147,10 @@ export default {
             dome.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             dome.style.transform = `translateY(${-currentIndex * 44}px)`;
             this.Y[i].MoveY = -currentIndex * 44;
-            const transitionend = () => {
-                if (i == 0) {
-                    this.province = this.regionlist[currentIndex].province
-                    this.citys = this.provlist[0].city
-                    this.areas = this.citylist[0].area
-                    this.reset(1)
-                    this.reset(2)
-                } else if (i == 1) {
-                    this.citys = this.provlist[currentIndex].city
-                    this.areas = this.citylist[0].area
-                    this.reset(2)
-                } else if (i == 2) {
-                    this.areas = this.citylist[currentIndex].area
-                }
-            }
-            dome.addEventListener('transitionend', transitionend)
-            if (-currentIndex * 44 === scrollToTheBottom) {
-                transitionend()
-            }
+            dome.addEventListener('transitionend', () => {
+                this.update(i, currentIndex)
+            })
+            if (currentIndex * 44 === -scrollToTheBottom || currentIndex * 44 === 0) this.update(i, currentIndex)
             this.Y[i].Velocity = 0;
         }
     },

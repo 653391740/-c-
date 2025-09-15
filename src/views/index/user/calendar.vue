@@ -54,13 +54,14 @@ export default {
         this.CalendarData();
         this.$nextTick(() => {
             const Container = this.$refs.calendarContainer;
+            const children = Container.children;
             let height = 0;
-            Array.from(Container.children).forEach((e, i) => {
+            for (let i = 0; i < Container.children.length; i++) {
                 this.calendarData[i].height = height;
-                if (i !== Container.children.length - 1) {
-                    height += e.offsetHeight + 20;
+                if (i !== children.length - 1) {
+                    height += children[i].offsetHeight + 20;
                 }
-            });
+            }
             Container.scrollTop = Container.scrollHeight;
         });
     },
@@ -68,8 +69,7 @@ export default {
         handleScroll() {
             const Container = this.$refs.calendarContainer;
             const scrollTop = Container.scrollTop;
-            console.log(scrollTop);
-            for (let i = Array.from(Container.children).length - 1; i >= 0; i--) {
+            for (let i = Container.children.length - 1; i >= 0; i--) {
                 if (scrollTop >= this.calendarData[i].height) {
                     this.scrollmonth = `${this.calendarData[i].year}年${this.calendarData[i].month}月`;
                     break;

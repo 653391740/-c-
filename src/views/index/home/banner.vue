@@ -35,7 +35,7 @@
         <button class="indicator"
             v-for="(slide, index) in slides"
             :key="index"
-            :class="{ 'active': index === realIndex }"
+            :class="{ 'active': index === currentIndex - 1 }"
             aria-label="切换到第n张轮播图"></button>
     </div>
 
@@ -56,17 +56,6 @@ export default {
             timer: null, // 自动播放定时器
             startX: 0, // 触摸开始位置
         };
-    },
-    computed: {
-        // 排除前后复制的元素,实际显示的索引
-        realIndex() {
-            if (this.currentIndex === 0) {
-                return this.slides.length - 1;
-            } else if (this.currentIndex === this.slides.length + 1) {
-                return 0;
-            }
-            return this.currentIndex - 1;
-        }
     },
     mounted() {
         this.getbanner()
@@ -123,7 +112,7 @@ export default {
                     this.currentIndex = 1;
                     setTimeout(() => {
                         this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-                    }, 50);
+                    }, 10);
                 }, 300);
             }
         },
@@ -137,7 +126,7 @@ export default {
                     this.currentIndex = this.slides.length;
                     setTimeout(() => {
                         this.$refs.carouselTrack.style.transition = 'transform 0.3s ease';
-                    }, 50);
+                    }, 10);
                 }, 300);
             }
         },
@@ -145,7 +134,6 @@ export default {
         // 绑定触摸事件
         bindTouchEvents() {
             if (!this.$refs.carouselTrack) return;
-
             const track = this.$refs.carouselTrack;
             track.addEventListener('touchstart', this.handleTouchStart);
             track.addEventListener('touchmove', this.handleTouchMove);
