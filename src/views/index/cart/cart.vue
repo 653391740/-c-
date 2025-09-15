@@ -144,6 +144,7 @@ export default {
             }
         },
         touchmove(e, i) {
+            e.preventDefault()
             this.moveX = e.changedTouches[0].clientX
             this.moveY = e.changedTouches[0].clientY
 

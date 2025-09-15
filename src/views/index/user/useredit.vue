@@ -61,9 +61,9 @@
     </Popup>
     <Popup :show.sync="showRegion"
         :close="false">
-        <Region :region="userinfo.region"
-            :show.sync="showRegion"
-            @region-change="userinfo.region = $event"></Region>
+        <Region :show.sync="showRegion"
+            @region-change="userinfo.region = $event">
+        </Region>
     </Popup>
 </div>
 </template>

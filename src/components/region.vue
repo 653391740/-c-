@@ -92,6 +92,7 @@ export default {
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
+            e.preventDefault()
             const dome = this.$refs.calendar.children[i]
             const scrollDistance = e.touches[0].clientY - this.Y[i].StartY
             const scrollToTheBottom = this.num(i)
