@@ -6,6 +6,7 @@ import postcssPxToViewport from 'postcss-px-to-viewport'
 
 
 export default defineConfig({
+  base: './',
   plugins: [vue()],
   resolve: {
     alias: {

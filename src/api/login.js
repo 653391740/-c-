@@ -8,7 +8,7 @@ export const sms = (params) => {
     return http.get('sms', { params })
 }
 export const smslogin = (data) => {
-    const formData = new URLSearchParams();
+    const formData = new FormData();
     for (const key in data) {
         formData.append(key, data[key]);
     }
@@ -16,11 +16,7 @@ export const smslogin = (data) => {
 }
 // 注册
 export const register = (data) => {
-    const formData = new URLSearchParams();
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
-    return http.post('register', formData)
+    return http.post('register', data)
 }
 export const getuserinfo = () => {
     return http.get('getuserinfo', {

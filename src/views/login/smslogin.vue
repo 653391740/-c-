@@ -8,7 +8,13 @@
         <Input v-model="form.code"
             label="短信验证码">
         </Input>
-        <button @click="sms">获取验证码</button>
+        <button @click="sms">
+            {{ count <= 0
+                ? '重新获取'
+                : count
+                + '秒后重新获取'
+            }}
+                </button>
     </div>
     <button @click="login">点击登录</button>
 </div>
@@ -21,13 +27,20 @@ export default {
             form: {
                 phone: '18001066656',
                 code: '',
-                servercode: ''
-            }
+                servercode: '',
+            },
+            count: 0
         }
     },
     methods: {
         async sms() {
-            if (this.form.phone && this.form.phone.length == 11) {
+            if (this.form.phone && this.form.phone.length == 11 && this.count <= 0) {
+                this.count = 10
+                setInterval(() => {
+                    if (this.count > 0) {
+                        this.count--
+                    }
+                }, 1000)
                 const { list: { code }, msg } = await sms({
                     phone: this.form.phone
                 })

@@ -32,9 +32,13 @@ export default {
     },
     methods: {
         async register() {
-            const res = await register(this.form)
-            console.log(res);
-
+            const { code } = await register(this.form)
+            if (code === 200) {
+                this.$popupMsg.success('注册成功')
+                this.$router.push('/home')
+            } else {
+                this.$msg('注册失败')
+            }
         }
     }
 }

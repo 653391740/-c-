@@ -41,6 +41,8 @@ export default {
                 localStorage.setItem('userinfo', JSON.stringify(list))
                 this.$router.push('/')
                 this.$popupMsg.success('登录成功')
+            } else {
+                this.$msg('账号或密码错误')
             }
         }
     }
