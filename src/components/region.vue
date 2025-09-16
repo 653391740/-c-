@@ -80,15 +80,27 @@ export default {
             return this.provlist.find(e => e.city === cityName)?.areas || [];
         },
     },
+    mounted() {
+        // 监听窗口大小变化
+        window.addEventListener('resize', this.handleResize);
+    },
+    beforeDestroy() {
+        // 移除窗口大小变化监听
+        window.removeEventListener('resize', this.handleResize);
+    },
     methods: {
         confirm() {
             this.$emit('update:show', false)
             this.$emit('region-change', `${this.province},${this.citys},${this.areas}`)
         },
+        handleResize() {
+            this.update(0, 0)
+            this.$refs.calendar.children[0].style.transform = `translateY(0px)`
+            this.Y[0].MoveY = 0;
+        },
         handleTouchStart(e, i) {
             this.Y[i].StartY = e.touches[0].clientY - this.Y[i].MoveY;
             this.time = new Date();
-            // 重置速度，准备计算新的滑动速度
             this.Y[i].Velocity = 0;
         },
         handleTouchMove(e, i) {
@@ -112,7 +124,7 @@ export default {
         },
         num(i) {
             const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
-            return -(listLength - 1) * 44;
+            return -(listLength - 1) * this.$getActualPx(44);
         },
         reset(i) {
             this.$refs.calendar.children[i].style.transform = `translateY(0px)`
@@ -144,14 +156,14 @@ export default {
             finalPosition = finalPosition > 0 ? 0
                 : finalPosition < scrollToTheBottom
                     ? scrollToTheBottom : finalPosition;
-            const currentIndex = Math.round(Math.abs(finalPosition) / 44);
+            const actualItemHeight = this.$getActualPx(44);
+            const currentIndex = Math.round(Math.abs(finalPosition) / actualItemHeight);
             dome.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            dome.style.transform = `translateY(${-currentIndex * 44}px)`;
-            this.Y[i].MoveY = -currentIndex * 44;
-            dome.addEventListener('transitionend', () => {
+            dome.style.transform = `translateY(${-currentIndex * actualItemHeight}px)`;
+            this.Y[i].MoveY = -currentIndex * actualItemHeight;
+            setTimeout(() => {
                 this.update(i, currentIndex)
-            })
-            if (currentIndex * 44 === -scrollToTheBottom || currentIndex * 44 === 0) this.update(i, currentIndex)
+            }, 500)
             this.Y[i].Velocity = 0;
         }
     },
@@ -170,6 +182,7 @@ export default {
             div {
                 padding: 0 16px;
                 line-height: 44px;
+                /* 行高与 JS 中 this.itemHeight 一致 */
                 font-size: 14px;
             }
 
@@ -204,6 +217,7 @@ export default {
         ul {
             transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             padding: 128px 0;
+            /* 上下内边距与 JS 中 this.padding 一致 */
             text-align: center;
             width: calc(100% / 3);
 

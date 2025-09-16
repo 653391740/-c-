@@ -59,7 +59,7 @@ export default {
             for (let i = 0; i < Container.children.length; i++) {
                 this.calendarData[i].height = height;
                 if (i !== children.length - 1) {
-                    height += children[i].offsetHeight + 20;
+                    height += children[i].offsetHeight + this.$getActualPx(20);
                 }
             }
             Container.scrollTop = Container.scrollHeight;

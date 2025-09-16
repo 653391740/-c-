@@ -638,3 +638,144 @@ export default router;
     ```
 
 -   **实现效果**: 通过在计算高度时添加月份间距（20px），确保了计算的高度与实际渲染的高度一致，从而解决了滚动时显示的年月与页面实际位置不一致的问题。用户在滚动日历时，顶部显示的年月能够准确反映当前查看的月份位置。
+
+
+
+### 7. Region.vue 组件滑动滚动位置问题解决方案
+
+-   **问题描述**:
+
+    在 region.vue 组件中，使用 postcssPxToViewport 进行 px 到 vw 的转换时，JavaScript 代码中硬编码的 px 值没有被转换，导致在不同设备上滑动滚动的位置计算不准确。
+
+-   **问题原因**:
+
+    1. postcssPxToViewport 只能转换 CSS 中的 px 单位，无法转换 JavaScript 代码中的 px 值
+    2. region.vue 组件中有多处使用 px 值进行计算和定位的地方，例如：
+        - 列表项高度（44px）
+        - 列表上下内边距（128px）
+        - 渐变遮罩位置（22px）
+
+-   **解决方案**:
+
+        #### 1. 添加工具函数处理 JavaScript 中的 px 值
+
+        ```javascript
+        // 工具函数：获取当前视口宽度并计算实际像素值
+        getActualPx(px, designWidth = 375) {
+            const actualViewportWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            return px / designWidth \* actualViewportWidth;
+        }
+        ```
+
+        #### 2. 修改计算方法使用实际像素值
+
+        修改 `num()` 方法：
+
+        ```javascript
+        num(i) {
+            const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
+            return -(listLength - 1) * this.getActualPx(44);
+        }
+        ```
+
+        修改 `handleTouchEnd()` 方法：
+
+        ```javascript
+        handleTouchEnd(e, i) {
+            // ... 其他代码
+            const actualItemHeight = this.getActualPx(44);
+            const currentIndex = Math.round(Math.abs(finalPosition) / actualItemHeight);
+            dome.style.transform = `translateY(${-currentIndex * actualItemHeight}px)`;
+            this.Y[i].MoveY = -currentIndex * actualItemHeight;
+            // ... 其他代码
+        }
+        ```
+
+        #### 4. 添加窗口大小变化监听
+
+        ```javascript
+        mounted() {
+            // 监听窗口大小变化
+            window.addEventListener('resize', this.handleResize);
+        },
+        beforeDestroy() {
+            // 移除窗口大小变化监听
+            window.removeEventListener('resize', this.handleResize);
+        },
+        methods: {
+            // 窗口变化重置选择
+            handleResize() {
+                this.update(0, 0)
+                this.$refs.calendar.children[0].style.transform = `translateY(0px)`
+                this.Y[0].MoveY = 0;
+            },
+            // ... 其他方法
+        }
+        ```
+
+-   **解决效果**:
+
+    通过以上修改，region.vue 组件在不同设备上的滑动滚动位置计算变得准确，不再出现位置偏移的问题。CSS 中的 px 值通过 postcssPxToViewport 自动转换为 vw 单位，而 JavaScript 中的 px 值通过 getActualPx 函数动态计算实际像素值，确保两者在不同设备上保持一致。
+
+-   **注意事项**:
+
+    1. 设计稿宽度（375px）需要与 postcssPxToViewport 配置中的 viewportWidth 保持一致
+    2. 所有硬编码的 px 值都应该通过 getActualPx 函数进行转换
+    3. 窗口大小变化时需要重新计算位置，确保响应式布局正确
+    4. CSS 和 JavaScript 中的尺寸值需要保持一致，避免计算错误
+
+
+### 8. 全局像素转换工具函数
+
+为了在整个应用中统一处理像素转换，避免在每个组件中重复定义 `getActualPx` 函数，我们已经将该函数提取为全局工具函数。
+
+#### 8.1 工具函数实现
+
+在 `src/utils/pxUtils.js` 中实现了像素转换工具函数：
+
+```javascript
+export function getActualPx(px, designWidth = 375) {
+    const actualViewportWidth =
+        window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.body.clientWidth;
+    return (px / designWidth) * actualViewportWidth;
+}
+```
+
+#### 8.2 全局注册
+
+在 `src/main.js` 中导入并使用该插件：
+
+```javascript
+// ...
+import { getActualPx } from "./utils/pxUtils"; // 导入像素转换工具
+Vue.prototype.$getActualPx = getActualPx // 全局注册像素转换工具
+```
+
+#### 8.3 优势
+
+1. **代码复用**：避免在每个组件中重复定义相同的转换函数
+2. **维护性**：集中管理像素转换逻辑，便于后续修改和维护
+3. **一致性**：确保整个应用使用相同的转换逻辑，避免因不同实现导致的显示问题
+4. **灵活性**：支持自定义设计稿宽度，适应不同设计规范
+
+#### 8.4 示例：更新 region.vue 组件
+
+我们已经将 region.vue 组件中的本地 `getActualPx` 方法替换为全局方法：
+
+```javascript
+// 修改前
+num(i) {
+    const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
+    return -(listLength - 1) * this.$getActualPx(this.itemHeight);
+},
+
+// 修改后
+num(i) {
+    const listLength = i === 1 ? this.provlist.length : i === 2 ? this.citylist.length : this.regionlist.length;
+    return -(listLength - 1) * this.$getActualPx(this.itemHeight);
+},
+```
+
+通过这种方式，我们简化了组件代码，提高了代码的可维护性和复用性。
