@@ -135,7 +135,7 @@ export default {
                 this.moveX = e.changedTouches[0].clientX
                 const deltaX = this.moveX - this.startX
                 if (deltaX < 0) {
-                    this.$refs.li[i].style.transform = `translateX(-60px)`
+                    this.$refs.li[i].style.transform = `translateX(-${this.$getActualPx(60)}px)`
                     this.list[i].isdel = true
                 } else if (deltaX > 0) {
                     this.$refs.li[i].style.transform = `translateX(0px)`
@@ -162,9 +162,9 @@ export default {
             if (this.slideDirection === 'horizontal') {
                 this.$refs.li[i].style.transition = `none`
                 this.moveX = e.changedTouches[0].clientX
-                const startX = (this.list[i].isdel ? -60 : 0) + this.moveX - this.startX
+                const startX = (this.list[i].isdel ? -this.$getActualPx(60) : 0) + this.moveX - this.startX
                 this.$refs.li[i].style.transform
-                    = `translateX(${startX < -60 ? -60
+                    = `translateX(${startX < -this.$getActualPx(60) ? -this.$getActualPx(60)
                         : startX > 0 ? 0 : startX}px)`
             }
         },
